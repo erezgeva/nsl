@@ -31,6 +31,31 @@
 #define __ST_TYPE int64_t
 #endif /* ST_USE_TYPE */
 
+#ifndef __UINT8_MAX__
+#define __UINT8_MAX__  0xff
+#endif
+#ifndef __UINT16_MAX__
+#define __UINT16_MAX__ 0xffff
+#endif
+#ifndef __UINT32_MAX__
+#define __UINT32_MAX__ 0xffffffffU
+#endif
+#ifndef __UINT64_MAX__
+#define __UINT64_MAX__ 0xffffffffffffffffUL
+#endif
+#ifndef __INT8_MAX__
+#define __INT8_MAX__   0x7f
+#endif
+#ifndef __INT16_MAX__
+#define __INT16_MAX__  0x7fff
+#endif
+#ifndef __INT32_MAX__
+#define __INT32_MAX__  0x7fffffff
+#endif
+#ifndef __INT64_MAX__
+#define __INT64_MAX__  0x7fffffffffffffffL
+#endif
+
 #define __ST_COUNT_TYPE uint64_t /* Count type */
 #if !defined(__cplusplus) && !defined(__STDC_VERSION__)
 /* C89 does not support sqrtl() */
@@ -180,38 +205,62 @@ __ST_INLINE_ void __ST_NAME(init)(__ST_SELF_)
 
     /* Geting the Maximum and minimum depend on element type */
     if(m / 10 > 0) { /* Floating type */
-        unsigned s = sizeof(__ST_TYPE);
 #pragma GCC diagnostic ignored "-Woverflow"
-        if(s == 4) { /* float */
-            __ST_FIELD_(min) = FLT_MAX;
-            __ST_FIELD_(max) = FLT_MIN;
-        }else if(m == 8) { /* double */
-            __ST_FIELD_(min) = DBL_MAX;
-            __ST_FIELD_(max) = DBL_MIN;
-        }else { /* Must be: long double m == 16 */
-            __ST_FIELD_(min) = LDBL_MAX;
-            __ST_FIELD_(max) = LDBL_MIN;
-        }
+        switch(sizeof(__ST_TYPE)) {
+            case sizeof(float):
+                __ST_FIELD_(min) = FLT_MAX;
+                break;
+            case sizeof(double):
+                __ST_FIELD_(min) = DBL_MAX;
+                break;
+            default: /* Must be: long double */
+                __ST_FIELD_(min) = LDBL_MAX;
+                break;
 #pragma GCC diagnostic warning "-Woverflow"
-    } else {
-        /* Integer type */
-        unsigned i, sign = 1;
-        m = 0x7f; /* Signed value use the upper bit for sign */
-#pragma GCC diagnostic ignored "-Wtype-limits"
-        if(m >= 0 && ~m >= 0) {
-#pragma GCC diagnostic warning "-Wtype-limits"
-            m = 0xff; /* Unsigned use all bits! */
-            sign = 0;
         }
-        for(i = 0; i < sizeof(__ST_TYPE) - 1; i++)
-            m = 0xff | (m << 8);
-        __ST_FIELD_(min) = m; /* Miximum */
-        if(sign)
-            /* minimum value for sined is the complementary of the maximum */
-            __ST_FIELD_(max) = ~(m);
-        else
-            /* 0 is the minimum value for unsigned */
-            __ST_FIELD_(max) = 0;
+        __ST_FIELD_(max) = -(__ST_FIELD_(min));
+    } else if(m - 2 > 0) { /* unsigned Integer type */
+        switch(sizeof(__ST_TYPE)) {
+            case 1:
+                __ST_FIELD_(min) = __UINT8_MAX__;
+                break;
+            case 2:
+                __ST_FIELD_(min) = __UINT16_MAX__;
+                break;
+            case 4:
+                __ST_FIELD_(min) = __UINT32_MAX__;
+                break;
+            case 8:
+                __ST_FIELD_(min) = __UINT64_MAX__;
+                break;
+            default: /* Must be: 128 bits */
+                /* Does not have a macro so calculate the value */
+                /* m = 1; */
+                __ST_FIELD_(min) = (m + __UINT64_MAX__) * __UINT64_MAX__ + __UINT64_MAX__;
+                break;
+        }
+        __ST_FIELD_(max) = 0;
+    } else { /* Signed Integer type */
+        switch(sizeof(__ST_TYPE)) {
+            case 1:
+                __ST_FIELD_(min) = __INT8_MAX__;
+                break;
+            case 2:
+                __ST_FIELD_(min) = __INT16_MAX__;
+                break;
+            case 4:
+                __ST_FIELD_(min) = __INT32_MAX__;
+                break;
+            case 8:
+                __ST_FIELD_(min) = __INT64_MAX__;
+                break;
+            default: /* Must be: 128 bits */
+                /* Does not have a macro so calculate the value */
+                /* m = 1; */
+                __ST_FIELD_(min) = (m + __UINT64_MAX__) * __INT64_MAX__ + __UINT64_MAX__;
+                break;
+        }
+        __ST_FIELD_(max) = -(__ST_FIELD_(min)) - 1;
     }
 }
 
