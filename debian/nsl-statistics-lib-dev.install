@@ -1,0 +1,2 @@
+#!/usr/bin/dh-exec
+nsl_statistics.h usr/include

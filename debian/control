@@ -1,0 +1,12 @@
+Source: nsl-statistics-lib
+Maintainer: Erez Geva <ErezGeva2@gmail.com>
+Section: libs
+Priority: optional
+Standards-Version: 4.1.4
+Build-Depends: debhelper (>= 9), dh-exec (>=0.3), libtool
+
+Package: nsl-statistics-lib-dev
+Architecture: all
+Section: libdevel
+Description: New Scientific Library
+ Calculate Arithmetic mean, variance and Standard Deviation on the fly.

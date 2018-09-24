@@ -10,3 +10,5 @@ LDLIBS:=-lm
 all: clean $(ALL)
 clean:
 	$(RM) $(ALL)
+deb:
+	dpkg-buildpackage -b --no-sign

@@ -1,0 +1,7 @@
+Format: http://www.debian.org/doc/packaging-manuals/copyright-format/1.0/
+Upstream-Name: nsl-statistics-lib
+
+Files: *
+Copyright:
+ 2018 Erez Geva <ErezGeva2@gmail.com>
+License: MIT
