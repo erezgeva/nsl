@@ -8,21 +8,49 @@
 #include <float.h>
 #include <math.h>
 
-#ifndef max
-#define max(a,b) ({ __typeof__ (a) _a = (a); __typeof__ (b) _b = (b); \
-                    _a > _b ? _a : _b;})
-#endif
-#ifndef min
-#define min(a,b) ({ __typeof__ (a) _a = (a); __typeof__ (b) _b = (b); \
-                    _a < _b ? _a : _b;})
-#endif
 
 /* To Force C syntax under C++ define ST_USE_C before including */
-#ifndef ST_USE_C
 #ifdef __cplusplus
+#ifndef ST_USE_C
 #define __ST_USE_CPP_ /* Use C++ syntax */
-#endif
 #endif /* ST_USE_C */
+#include <algorithm>
+/* use C++ max and min functions  */
+#define __ST_MAX(a,b) std::max(a,b)
+#define __ST_MIN(a,b) std::min(a,b)
+#else /* __cplusplus */
+#ifndef __STDC_VERSION__
+/* C89 does not support sqrtl() */
+#define __ST_MEAN_TYPE double /* Mean type */
+#define __ST_SQRT(a) sqrt(a) /* Use sqrt for long double */
+#endif /* __STDC_VERSION__ */
+#endif /* __cplusplus */
+
+#define __ST_COUNT_TYPE uint64_t /* Count type */
+#ifndef __ST_MEAN_TYPE
+#define __ST_MEAN_TYPE long double /* Mean type */
+#endif
+#ifndef __ST_SQRT
+#define __ST_SQRT(a) sqrtl(a) /* Use sqrt for long double */
+#endif
+
+#ifndef __ST_MAX
+#ifdef max
+#define __ST_MAX(a,b) max(a,b)
+#else
+#define __ST_MAX(a,b) ({ __typeof__ (a) _a = (a); __typeof__ (b) _b = (b); \
+                  _a > _b ? _a : _b;})
+#endif /* max */
+#endif /* __ST_MAX */
+
+#ifndef __ST_MIN
+#ifdef min
+#define __ST_MIN(a,b) min(a,b)
+#else
+#define __ST_MIN(a,b) ({ __typeof__ (a) _a = (a); __typeof__ (b) _b = (b); \
+                    _a < _b ? _a : _b;})
+#endif /* min */
+#endif /* __ST_MIN */
 
 /* Element type */
 #ifdef ST_USE_TYPE
@@ -56,18 +84,6 @@
 #define __INT64_MAX__  0x7fffffffffffffffL
 #endif
 
-#define __ST_COUNT_TYPE uint64_t /* Count type */
-#if !defined(__cplusplus) && !defined(__STDC_VERSION__)
-/* C89 does not support sqrtl() */
-#define __ST_MEAN_TYPE double /* Mean type */
-#define __ST_SQRT(a) sqrt(a) /* Use sqrt for long double */
-#endif /* ! __cplusplus && ! __STDC_VERSION__ */
-#ifndef __ST_MEAN_TYPE
-#define __ST_MEAN_TYPE long double /* Mean type */
-#endif
-#ifndef __ST_SQRT
-#define __ST_SQRT(a) sqrtl(a) /* Use sqrt for long double */
-#endif
 #define __ST_MYSELF nsl_stats
 
 #ifdef __ST_USE_CPP_
@@ -127,8 +143,8 @@ __ST_INLINE_ void __ST_NAME(add_elem)(__ST_SELF2_ __ST_TYPE e)
 {
     register __ST_MEAN_TYPE elem = e;
     register __ST_MEAN_TYPE N = ++(__ST_FIELD_(num));
-    __ST_FIELD_(min) = min(__ST_FIELD_(min), e);
-    __ST_FIELD_(max) = max(__ST_FIELD_(max), e);
+    __ST_FIELD_(min) = __ST_MIN(__ST_FIELD_(min), e);
+    __ST_FIELD_(max) = __ST_MAX(__ST_FIELD_(max), e);
     __ST_FIELD_(mean) += ((__ST_MEAN_TYPE)elem - __ST_FIELD_(mean)) / N;
     __ST_FIELD_(sq) += ((__ST_MEAN_TYPE)elem * elem - __ST_FIELD_(sq)) / N;
     if(__ST_FIELD_(num_cut) < 2)
@@ -279,6 +295,8 @@ __ST_INLINE_ void __ST_NAME(set_cut_num)(__ST_SELF2_ __ST_COUNT_TYPE N)
 #undef __ST_COUNT_TYPE
 #undef __ST_MEAN_TYPE
 #undef __ST_SQRT
+#undef __ST_MAX
+#undef __ST_MIN
 #undef __ST_MYSELF
 #undef __ST_NAME
 #undef __ST_NAME_GET

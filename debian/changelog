@@ -1,3 +1,9 @@
+nsl-statistics-lib (0.2) UNRELEASED; urgency=low
+
+  * Remove the max and min macros, may conflict with C++ standard functions.
+
+ -- Erez Geva <ErezGeva2@gmail.com>  Thu, 6 Dec 2018 14:00:00 +0200
+
 nsl-statistics-lib (0.1) UNRELEASED; urgency=low
 
   * Initial release.
