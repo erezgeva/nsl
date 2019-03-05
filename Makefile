@@ -1,5 +1,5 @@
 ALL:=test1 test2
-CPPFLAGS:=-Wall -Wextra -Winline
+CPPFLAGS:=-Wall -Wextra -Winline -g
 #CFLAGS:=-ansi
 # -ansi -std=c89
 # -std=c99

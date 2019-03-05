@@ -1,3 +1,9 @@
+nsl-statistics-lib (0.3) UNRELEASED; urgency=low
+
+  * Add statistics vector
+
+ -- Erez Geva <ErezGeva2@gmail.com>  Tue, 05 Mar 2019 13:56:34 +0100
+
 nsl-statistics-lib (0.2) UNRELEASED; urgency=low
 
   * Remove the max and min macros, may conflict with C++ standard functions.

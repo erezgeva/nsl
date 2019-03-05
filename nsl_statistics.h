@@ -5,9 +5,10 @@
 #define __NSL_STATISTICS__H__
 
 #include <stdint.h>
+#include <stdlib.h>
+#include <string.h>
 #include <float.h>
 #include <math.h>
-
 
 /* To Force C syntax under C++ define ST_USE_C before including */
 #ifdef __cplusplus
@@ -15,7 +16,7 @@
 #define __ST_USE_CPP_ /* Use C++ syntax */
 #endif /* ST_USE_C */
 #include <algorithm>
-/* use C++ max and min functions  */
+/* use C++ max and min functions */
 #define __ST_MAX(a,b) std::max(a,b)
 #define __ST_MIN(a,b) std::min(a,b)
 #else /* __cplusplus */
@@ -60,28 +61,37 @@
 #endif /* ST_USE_TYPE */
 
 #ifndef __UINT8_MAX__
-#define __UINT8_MAX__  0xff
+#define __UINT8_MAX__  (0xff)
 #endif
 #ifndef __UINT16_MAX__
-#define __UINT16_MAX__ 0xffff
+#define __UINT16_MAX__ (0xffff)
 #endif
 #ifndef __UINT32_MAX__
-#define __UINT32_MAX__ 0xffffffffU
+#define __UINT32_MAX__ (0xffffffffU)
 #endif
 #ifndef __UINT64_MAX__
-#define __UINT64_MAX__ 0xffffffffffffffffUL
+#define __UINT64_MAX__ (0xffffffffffffffffUL)
 #endif
 #ifndef __INT8_MAX__
-#define __INT8_MAX__   0x7f
+#define __INT8_MAX__   (0x7f)
 #endif
 #ifndef __INT16_MAX__
-#define __INT16_MAX__  0x7fff
+#define __INT16_MAX__  (0x7fff)
 #endif
 #ifndef __INT32_MAX__
-#define __INT32_MAX__  0x7fffffff
+#define __INT32_MAX__  (0x7fffffff)
 #endif
 #ifndef __INT64_MAX__
-#define __INT64_MAX__  0x7fffffffffffffffL
+#define __INT64_MAX__  (0x7fffffffffffffffL)
+#endif
+#ifndef __FLT_MAX__
+#define __FLT_MAX__    (3.40282346638528859812e+38F)
+#endif
+#ifndef __DBL_MAX__
+#define __DBL_MAX__    ((double)1.79769313486231570815e+308L)
+#endif
+#ifndef __LDBL_MAX__
+#define __LDBL_MAX__   (1.18973149535723176502e+4932L)
 #endif
 
 #define __ST_MYSELF nsl_stats
@@ -129,9 +139,12 @@ struct __ST_MYSELF
        http://mathworld.wolfram.com/StandardDeviation.html */
 
     /* Mean over limited number of elements (num cut). */
-    __ST_COUNT_TYPE __ST_FIELD_NAME_(num_cut); /* number in which we start to cut */
-    __ST_MEAN_TYPE __ST_FIELD_NAME_(mean_cut); /* Arithmetic Mean with number cut */
-    __ST_MEAN_TYPE __ST_FIELD_NAME_(sq_cut); /* Arithmetic Mean of X^2 with number cut */
+    /* number in which we start to cut */
+    __ST_COUNT_TYPE __ST_FIELD_NAME_(num_cut);
+    /* Arithmetic Mean with number cut */
+    __ST_MEAN_TYPE __ST_FIELD_NAME_(mean_cut);
+    /* Arithmetic Mean of X^2 with number cut */
+    __ST_MEAN_TYPE __ST_FIELD_NAME_(sq_cut);
 
 #ifdef __ST_USE_CPP_
 public:
@@ -224,13 +237,13 @@ __ST_INLINE_ void __ST_NAME(init)(__ST_SELF_)
 #pragma GCC diagnostic ignored "-Woverflow"
         switch(sizeof(__ST_TYPE)) {
             case sizeof(float):
-                __ST_FIELD_(min) = FLT_MAX;
+                __ST_FIELD_(min) = __FLT_MAX__;
                 break;
             case sizeof(double):
-                __ST_FIELD_(min) = DBL_MAX;
+                __ST_FIELD_(min) = __DBL_MAX__;
                 break;
             default: /* Must be: long double */
-                __ST_FIELD_(min) = LDBL_MAX;
+                __ST_FIELD_(min) = __LDBL_MAX__;
                 break;
 #pragma GCC diagnostic warning "-Woverflow"
         }
@@ -252,7 +265,8 @@ __ST_INLINE_ void __ST_NAME(init)(__ST_SELF_)
             default: /* Must be: 128 bits */
                 /* Does not have a macro so calculate the value */
                 /* m = 1; */
-                __ST_FIELD_(min) = (m + __UINT64_MAX__) * __UINT64_MAX__ + __UINT64_MAX__;
+                __ST_FIELD_(min) = (m + __UINT64_MAX__) * __UINT64_MAX__ +
+                    __UINT64_MAX__;
                 break;
         }
         __ST_FIELD_(max) = 0;
@@ -273,7 +287,8 @@ __ST_INLINE_ void __ST_NAME(init)(__ST_SELF_)
             default: /* Must be: 128 bits */
                 /* Does not have a macro so calculate the value */
                 /* m = 1; */
-                __ST_FIELD_(min) = (m + __UINT64_MAX__) * __INT64_MAX__ + __UINT64_MAX__;
+                __ST_FIELD_(min) = (m + __UINT64_MAX__) * __INT64_MAX__ +
+                    __UINT64_MAX__;
                 break;
         }
         __ST_FIELD_(max) = -(__ST_FIELD_(min)) - 1;
@@ -287,6 +302,177 @@ __ST_INLINE_ void __ST_NAME(set_cut_num)(__ST_SELF2_ __ST_COUNT_TYPE N)
 
 #ifdef __ST_USE_CPP_
     __ST_MYSELF(){__ST_NAME(init)();}
+}; /* class __ST_MYSELF */
+#endif
+
+/* ****************************************************************** */
+/* Statistic vector */
+#define __STV_MYSELF nsl_vec_stats
+
+#ifdef __ST_USE_CPP_
+
+#define __STV_NAME(a) a
+#define __STV_NAME_GET(a) get_##a
+#define __STV_FIELD_(a) a
+#define __STV_FIELD_NAME_(a) a
+#define __STV_SELF_ void
+#define __STV_SELF2_
+#define __STV_OTHER __STV_MYSELF *ost
+class __STV_MYSELF
+{
+private:
+
+#else /*__ST_USE_CPP_*/
+
+#define __STV_NAME(a) nsl_vec_stats_##a
+#define __STV_NAME_GET(a) nsl_vec_stats_get_##a
+#define __STV_FIELD_(a) st->nsl_vec_stats_##a
+#define __STV_FIELD_NAME_(a) nsl_vec_stats_##a
+#define __STV_SELF_ struct __STV_MYSELF *st
+#define __STV_SELF2_ struct __STV_MYSELF *st,
+#define __STV_OTHER struct __STV_MYSELF *ost
+struct __STV_MYSELF
+{
+
+#endif /*__ST_USE_CPP_*/
+
+    /* Vector characters */
+    __ST_TYPE __STV_FIELD_NAME_(start); /* smaller counter */
+    __ST_TYPE __STV_FIELD_NAME_(end); /* bigger counter */
+    __ST_COUNT_TYPE __STV_FIELD_NAME_(step); /* step value */
+    __ST_COUNT_TYPE __STV_FIELD_NAME_(size); /* Number of counted elements */
+    /* measured values */
+    __ST_COUNT_TYPE __STV_FIELD_NAME_(num); /* Number of elements */
+    /* Vector for number of elements in range */
+    __ST_COUNT_TYPE *__STV_FIELD_NAME_(vector);
+    /* Number of elements bellow range */
+    __ST_COUNT_TYPE __STV_FIELD_NAME_(below);
+    /* Number of elements above range */
+    __ST_COUNT_TYPE __STV_FIELD_NAME_(above);
+
+#ifdef __ST_USE_CPP_
+public:
+#else /*__ST_USE_CPP_*/
+}; /* struct __STV_MYSELF */
+#endif /*__ST_USE_CPP_*/
+
+__ST_INLINE_ __ST_TYPE __STV_NAME_GET(start)(__STV_SELF_)
+{return __STV_FIELD_(start);}
+__ST_INLINE_ __ST_TYPE __STV_NAME_GET(end)(__STV_SELF_)
+{return __STV_FIELD_(end);}
+__ST_INLINE_ __ST_COUNT_TYPE __STV_NAME_GET(step)(__STV_SELF_)
+{return __STV_FIELD_(step);}
+__ST_INLINE_ __ST_COUNT_TYPE __STV_NAME_GET(size)(__STV_SELF_)
+{return __STV_FIELD_(size);}
+__ST_INLINE_ __ST_COUNT_TYPE __STV_NAME_GET(num)(__STV_SELF_)
+{return __STV_FIELD_(num);}
+__ST_INLINE_ __ST_COUNT_TYPE __STV_NAME_GET(below)(__STV_SELF_)
+{return __STV_FIELD_(below);}
+__ST_INLINE_ __ST_COUNT_TYPE __STV_NAME_GET(above)(__STV_SELF_)
+{return __STV_FIELD_(above);}
+
+__ST_INLINE_ __ST_COUNT_TYPE __STV_NAME_GET(value)(__STV_SELF2_ __ST_TYPE e)
+{
+    if(__STV_FIELD_(vector) == NULL)
+        return 0;
+    if(e <  __STV_FIELD_(start))
+        return __STV_FIELD_(below);
+    else if(e >= __STV_FIELD_(end))
+        return __STV_FIELD_(above);
+    else
+        return __STV_FIELD_(vector)[(e - __STV_FIELD_(start)) / __STV_FIELD_(step)];
+}
+
+__ST_INLINE_ void __STV_NAME(add_elem)(__STV_SELF2_ __ST_TYPE e)
+{
+    if(__STV_FIELD_(vector) != NULL)
+    {
+        if(e <  __STV_FIELD_(start))
+            __STV_FIELD_(below)++;
+        else if(e >= __STV_FIELD_(end))
+            __STV_FIELD_(above)++;
+        else
+            __STV_FIELD_(vector)[(e - __STV_FIELD_(start)) / __STV_FIELD_(step)]++;
+        __STV_FIELD_(num)++;
+    }
+}
+
+__ST_INLINE_ void __STV_NAME(init)(__STV_SELF2_ __ST_TYPE _start,
+        __ST_TYPE _end, __ST_COUNT_TYPE _step)
+{
+    if(_step < 1)
+        _step = 1; /* Minimum step*/
+    __STV_FIELD_(step) = _step;
+    if(_start == _end) {
+        __STV_FIELD_(start) = _start;
+        __STV_FIELD_(end) = _start + _step; /* minimum of 1 step */
+        __STV_FIELD_(size) = 1;
+    } else {
+        if(_start > _end) { /* Start should always be smaller */
+            __STV_FIELD_(start) = _end;
+            _end = _start;
+            _start = __STV_FIELD_(start);
+        } else
+            __STV_FIELD_(start) = _start;
+        /* Do we need to increase the end? */
+        if((_end - _start) % _step)
+            _end = _start + _step * (((_end - _start) / _step) + 1);
+        __STV_FIELD_(size) = (_end - _start) / _step;
+        __STV_FIELD_(end) = _end;
+    }
+    __STV_FIELD_(num) = 0;
+    __STV_FIELD_(vector) = (__ST_COUNT_TYPE *)malloc(sizeof(__ST_COUNT_TYPE) * __STV_FIELD_(size));
+    __STV_FIELD_(below) = 0;
+    __STV_FIELD_(above) = 0;
+}
+
+__ST_INLINE_ void __STV_NAME(remove)(__STV_SELF_)
+{
+  if(__STV_FIELD_(vector) != NULL)
+      free(__STV_FIELD_(vector));
+}
+
+__ST_INLINE_ void __STV_NAME(copy)(__STV_SELF2_ const __STV_OTHER)
+{
+    if(ost != NULL)
+    {
+        __STV_FIELD_(start) = ost->__STV_FIELD_NAME_(start);
+        __STV_FIELD_(end) = ost->__STV_FIELD_NAME_(end);
+        __STV_FIELD_(step) = ost->__STV_FIELD_NAME_(step);
+        __STV_FIELD_(size) = ost->__STV_FIELD_NAME_(size);
+        __STV_FIELD_(num) = ost->__STV_FIELD_NAME_(num);
+        __STV_FIELD_(below) = ost->__STV_FIELD_NAME_(below);
+        __STV_FIELD_(above) = ost->__STV_FIELD_NAME_(above);
+        if(__STV_FIELD_(vector) != NULL)
+            free(__STV_FIELD_(vector));
+        if(ost->__STV_FIELD_NAME_(vector) != NULL)
+        {
+            __ST_COUNT_TYPE sz = sizeof(__ST_COUNT_TYPE) * __STV_FIELD_(size);
+            __STV_FIELD_(vector) = (__ST_COUNT_TYPE *)malloc(sz);
+            if(__STV_FIELD_(vector) != NULL)
+                memcpy(__STV_FIELD_(vector), ost->__STV_FIELD_NAME_(vector), sz);
+        } else
+            __STV_FIELD_(vector) = NULL;
+    }
+}
+
+#ifdef __ST_USE_CPP_
+    __STV_MYSELF(__ST_TYPE _start = 0, __ST_TYPE _end = 0,
+            __ST_COUNT_TYPE _step = 1)
+        {__STV_NAME(init)(_start, _end, _step);}
+    ~__STV_MYSELF(){
+        {__STV_NAME(remove)();}
+    }
+    __STV_MYSELF(const __STV_MYSELF& ost){
+        __STV_FIELD_(vector) = NULL;
+        __STV_NAME(copy)((__STV_MYSELF *)&ost);
+    }
+    __STV_MYSELF& operator=(const __STV_MYSELF& ost)
+    {
+        if(this != &ost)
+            __STV_NAME(copy)((__STV_MYSELF *)&ost);
+        return *this;
+    }
 }; /* class __ST_MYSELF */
 #endif
 
@@ -306,5 +492,12 @@ __ST_INLINE_ void __ST_NAME(set_cut_num)(__ST_SELF2_ __ST_COUNT_TYPE N)
 #undef __ST_SELF2_
 #undef __ST_SELF_VAR_
 #undef __ST_INLINE_
+#undef __STV_MYSELF
+#undef __STV_NAME
+#undef __STV_NAME_GET
+#undef __STV_FIELD_
+#undef __STV_FIELD_NAME_
+#undef __STV_SELF_
+#undef __STV_SELF2_
 
 #endif/*__NSL_STATISTICS__H__*/
