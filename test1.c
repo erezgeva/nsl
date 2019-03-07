@@ -45,7 +45,7 @@ int main()
             nsl_stats_get_sd(&s));
     printf("===============================================\n");
     struct nsl_vec_stats v0, *v = &v0;
-    nsl_vec_stats_init(v, 10,49,10);
+    nsl_vec_stats_init(v, 10,5,10);
     printf("start " format ", end " format ", "
            "step " uformat ", size " uformat "\n",
             nsl_vec_stats_get_start(v),
