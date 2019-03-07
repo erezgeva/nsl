@@ -337,10 +337,9 @@ struct __STV_MYSELF
 #endif /*__ST_USE_CPP_*/
 
     /* Vector characters */
-    __ST_TYPE __STV_FIELD_NAME_(start); /* smaller counter */
-    __ST_TYPE __STV_FIELD_NAME_(end); /* bigger counter */
+    __ST_TYPE __STV_FIELD_NAME_(start); /* start of vector */
+    __ST_COUNT_TYPE __STV_FIELD_NAME_(count); /* vector size */
     __ST_COUNT_TYPE __STV_FIELD_NAME_(step); /* step value */
-    __ST_COUNT_TYPE __STV_FIELD_NAME_(size); /* Number of counted elements */
     /* measured values */
     __ST_COUNT_TYPE __STV_FIELD_NAME_(num); /* Number of elements */
     /* Vector for number of elements in range */
@@ -359,11 +358,11 @@ public:
 __ST_INLINE_ __ST_TYPE __STV_NAME_GET(start)(__STV_SELF_)
 {return __STV_FIELD_(start);}
 __ST_INLINE_ __ST_TYPE __STV_NAME_GET(end)(__STV_SELF_)
-{return __STV_FIELD_(end);}
+{return __STV_FIELD_(start) + __STV_FIELD_(step) * __STV_FIELD_(count);}
 __ST_INLINE_ __ST_COUNT_TYPE __STV_NAME_GET(step)(__STV_SELF_)
 {return __STV_FIELD_(step);}
 __ST_INLINE_ __ST_COUNT_TYPE __STV_NAME_GET(size)(__STV_SELF_)
-{return __STV_FIELD_(size);}
+{return __STV_FIELD_(count);}
 __ST_INLINE_ __ST_COUNT_TYPE __STV_NAME_GET(num)(__STV_SELF_)
 {return __STV_FIELD_(num);}
 __ST_INLINE_ __ST_COUNT_TYPE __STV_NAME_GET(below)(__STV_SELF_)
@@ -373,63 +372,58 @@ __ST_INLINE_ __ST_COUNT_TYPE __STV_NAME_GET(above)(__STV_SELF_)
 
 __ST_INLINE_ __ST_COUNT_TYPE __STV_NAME_GET(value)(__STV_SELF2_ __ST_TYPE e)
 {
+    __ST_COUNT_TYPE i;
     if(__STV_FIELD_(vector) == NULL)
         return 0;
-    if(e <  __STV_FIELD_(start))
+    if(e < __STV_FIELD_(start))
         return __STV_FIELD_(below);
-    else if(e >= __STV_FIELD_(end))
-        return __STV_FIELD_(above);
+    i = (e - __STV_FIELD_(start)) / __STV_FIELD_(step);
+    if(i < __STV_FIELD_(count))
+        return __STV_FIELD_(vector)[i];
     else
-        return __STV_FIELD_(vector)[(e - __STV_FIELD_(start)) / __STV_FIELD_(step)];
+        return __STV_FIELD_(above);
 }
 
 __ST_INLINE_ void __STV_NAME(add_elem)(__STV_SELF2_ __ST_TYPE e)
 {
-    if(__STV_FIELD_(vector) != NULL)
-    {
-        if(e <  __STV_FIELD_(start))
-            __STV_FIELD_(below)++;
-        else if(e >= __STV_FIELD_(end))
-            __STV_FIELD_(above)++;
-        else
-            __STV_FIELD_(vector)[(e - __STV_FIELD_(start)) / __STV_FIELD_(step)]++;
-        __STV_FIELD_(num)++;
+    __ST_COUNT_TYPE i;
+    if(__STV_FIELD_(vector) == NULL)
+        return;
+    if(e < __STV_FIELD_(start)) {
+        __STV_FIELD_(below)++;
+        return;
     }
+    i = (e - __STV_FIELD_(start)) / __STV_FIELD_(step);
+    if(i < __STV_FIELD_(count))
+        __STV_FIELD_(vector)[i]++;
+    else
+        __STV_FIELD_(above)++;
+    __STV_FIELD_(num)++;
 }
 
 __ST_INLINE_ void __STV_NAME(init)(__STV_SELF2_ __ST_TYPE _start,
-        __ST_TYPE _end, __ST_COUNT_TYPE _step)
+        __ST_COUNT_TYPE _count, __ST_COUNT_TYPE _step)
 {
     if(_step < 1)
         _step = 1; /* Minimum step*/
     __STV_FIELD_(step) = _step;
-    if(_start == _end) {
-        __STV_FIELD_(start) = _start;
-        __STV_FIELD_(end) = _start + _step; /* minimum of 1 step */
-        __STV_FIELD_(size) = 1;
-    } else {
-        if(_start > _end) { /* Start should always be smaller */
-            __STV_FIELD_(start) = _end;
-            _end = _start;
-            _start = __STV_FIELD_(start);
-        } else
-            __STV_FIELD_(start) = _start;
-        /* Do we need to increase the end? */
-        if((_end - _start) % _step)
-            _end = _start + _step * (((_end - _start) / _step) + 1);
-        __STV_FIELD_(size) = (_end - _start) / _step;
-        __STV_FIELD_(end) = _end;
-    }
+    if(_count < 1)
+        _count = 1; /* Minimum count*/
+    __STV_FIELD_(count) = _count;
+    __STV_FIELD_(start) = _start;
     __STV_FIELD_(num) = 0;
-    __STV_FIELD_(vector) = (__ST_COUNT_TYPE *)malloc(sizeof(__ST_COUNT_TYPE) * __STV_FIELD_(size));
     __STV_FIELD_(below) = 0;
     __STV_FIELD_(above) = 0;
+    __STV_FIELD_(vector) = (__ST_COUNT_TYPE *)
+        malloc(sizeof(__ST_COUNT_TYPE) * __STV_FIELD_(count));
 }
 
 __ST_INLINE_ void __STV_NAME(remove)(__STV_SELF_)
 {
-  if(__STV_FIELD_(vector) != NULL)
+  if(__STV_FIELD_(vector) != NULL) {
       free(__STV_FIELD_(vector));
+      __STV_FIELD_(vector) = NULL;
+  }
 }
 
 __ST_INLINE_ void __STV_NAME(copy)(__STV_SELF2_ const __STV_OTHER)
@@ -437,40 +431,39 @@ __ST_INLINE_ void __STV_NAME(copy)(__STV_SELF2_ const __STV_OTHER)
     if(ost != NULL)
     {
         __STV_FIELD_(start) = ost->__STV_FIELD_NAME_(start);
-        __STV_FIELD_(end) = ost->__STV_FIELD_NAME_(end);
+        __STV_FIELD_(count) = ost->__STV_FIELD_NAME_(count);
         __STV_FIELD_(step) = ost->__STV_FIELD_NAME_(step);
-        __STV_FIELD_(size) = ost->__STV_FIELD_NAME_(size);
         __STV_FIELD_(num) = ost->__STV_FIELD_NAME_(num);
         __STV_FIELD_(below) = ost->__STV_FIELD_NAME_(below);
         __STV_FIELD_(above) = ost->__STV_FIELD_NAME_(above);
-        if(__STV_FIELD_(vector) != NULL)
-            free(__STV_FIELD_(vector));
         if(ost->__STV_FIELD_NAME_(vector) != NULL)
         {
-            __ST_COUNT_TYPE sz = sizeof(__ST_COUNT_TYPE) * __STV_FIELD_(size);
-            __STV_FIELD_(vector) = (__ST_COUNT_TYPE *)malloc(sz);
+            __ST_COUNT_TYPE size = sizeof(__ST_COUNT_TYPE) * __STV_FIELD_(count);
+            __STV_FIELD_(vector) = (__ST_COUNT_TYPE *)malloc(size);
             if(__STV_FIELD_(vector) != NULL)
-                memcpy(__STV_FIELD_(vector), ost->__STV_FIELD_NAME_(vector), sz);
+                memcpy(__STV_FIELD_(vector), ost->__STV_FIELD_NAME_(vector), size);
         } else
             __STV_FIELD_(vector) = NULL;
     }
 }
 
 #ifdef __ST_USE_CPP_
-    __STV_MYSELF(__ST_TYPE _start = 0, __ST_TYPE _end = 0,
+    __STV_MYSELF(__ST_TYPE _start = 0, __ST_COUNT_TYPE _count = 1,
             __ST_COUNT_TYPE _step = 1)
-        {__STV_NAME(init)(_start, _end, _step);}
+        {__STV_NAME(init)(_start, _count, _step);}
     ~__STV_MYSELF(){
         {__STV_NAME(remove)();}
     }
     __STV_MYSELF(const __STV_MYSELF& ost){
-        __STV_FIELD_(vector) = NULL;
         __STV_NAME(copy)((__STV_MYSELF *)&ost);
     }
     __STV_MYSELF& operator=(const __STV_MYSELF& ost)
     {
-        if(this != &ost)
+        if(this != &ost) {
+            if(__STV_FIELD_(vector) != NULL)
+                free(__STV_FIELD_(vector));
             __STV_NAME(copy)((__STV_MYSELF *)&ost);
+        }
         return *this;
     }
 }; /* class __ST_MYSELF */

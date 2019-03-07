@@ -44,7 +44,7 @@ int main()
             s.get_sq(),
             s.get_sd());
     printf("===============================================\n");
-    nsl_vec_stats v(10,49,10);
+    nsl_vec_stats v(10,5,10);
     // Constructor does init!
     printf("start " format ", end " format ", "
            "step " uformat ", size " uformat "\n",
