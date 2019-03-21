@@ -91,7 +91,7 @@
 #define __DBL_MAX__    ((double)1.79769313486231570815e+308L)
 #endif
 #ifndef __LDBL_MAX__
-#define __LDBL_MAX__   (1.18973149535723176502e+4932L)
+#define __LDBL_MAX__   ((long double)(1.18973149535723176502e+4932L)
 #endif
 
 #define __ST_MYSELF nsl_stats
