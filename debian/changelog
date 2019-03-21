@@ -1,3 +1,9 @@
+nsl-statistics-lib (0.4) UNRELEASED; urgency=low
+
+  * Add a proper casting to the LDBL_MAX macro
+
+ -- Erez Geva <ErezGeva2@gmail.com>  Thu, 21 Mar 2019 19:08:32 +0100
+
 nsl-statistics-lib (0.3) UNRELEASED; urgency=low
 
   * Add statistics vector
