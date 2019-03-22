@@ -317,6 +317,7 @@ __ST_INLINE_ void __ST_NAME(set_cut_num)(__ST_SELF2_ __ST_COUNT_TYPE N)
 #define __STV_FIELD_NAME_(a) a
 #define __STV_SELF_ void
 #define __STV_SELF2_
+#define __STV_ME_ this
 #define __STV_OTHER __STV_MYSELF *ost
 class __STV_MYSELF
 {
@@ -330,6 +331,7 @@ private:
 #define __STV_FIELD_NAME_(a) nsl_vec_stats_##a
 #define __STV_SELF_ struct __STV_MYSELF *st
 #define __STV_SELF2_ struct __STV_MYSELF *st,
+#define __STV_ME_ st
 #define __STV_OTHER struct __STV_MYSELF *ost
 struct __STV_MYSELF
 {
@@ -391,6 +393,7 @@ __ST_INLINE_ void __STV_NAME(add_elem)(__STV_SELF2_ __ST_TYPE e)
         return;
     if(e < __STV_FIELD_(start)) {
         __STV_FIELD_(below)++;
+        __STV_FIELD_(num)++;
         return;
     }
     i = (e - __STV_FIELD_(start)) / __STV_FIELD_(step);
@@ -426,9 +429,9 @@ __ST_INLINE_ void __STV_NAME(remove)(__STV_SELF_)
   }
 }
 
-__ST_INLINE_ void __STV_NAME(copy)(__STV_SELF2_ const __STV_OTHER)
+__ST_INLINE_ int __STV_NAME(copy)(__STV_SELF2_ const __STV_OTHER)
 {
-    if(ost != NULL)
+    if(ost != NULL && ost != __STV_ME_)
     {
         __STV_FIELD_(start) = ost->__STV_FIELD_NAME_(start);
         __STV_FIELD_(count) = ost->__STV_FIELD_NAME_(count);
@@ -444,7 +447,9 @@ __ST_INLINE_ void __STV_NAME(copy)(__STV_SELF2_ const __STV_OTHER)
                 memcpy(__STV_FIELD_(vector), ost->__STV_FIELD_NAME_(vector), size);
         } else
             __STV_FIELD_(vector) = NULL;
+        return (1 == 1);
     }
+    return (1 == 0);
 }
 
 #ifdef __ST_USE_CPP_
@@ -492,5 +497,6 @@ __ST_INLINE_ void __STV_NAME(copy)(__STV_SELF2_ const __STV_OTHER)
 #undef __STV_FIELD_NAME_
 #undef __STV_SELF_
 #undef __STV_SELF2_
+#undef __STV_ME_
 
 #endif/*__NSL_STATISTICS__H__*/

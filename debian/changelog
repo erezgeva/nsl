@@ -1,3 +1,11 @@
+nsl-statistics-lib (0.5) UNRELEASED; urgency=low
+
+  * Fix add_elem.
+  * copy return Boolean to indicate if it was copying.
+  * copy avoid copying same structure.
+
+ -- Erez Geva <ErezGeva2@gmail.com>  Fri, 22 Mar 2019 12:43:34 +0100
+
 nsl-statistics-lib (0.4) UNRELEASED; urgency=low
 
   * Add a proper casting to the LDBL_MAX macro
