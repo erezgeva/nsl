@@ -391,9 +391,9 @@ __ST_INLINE_ void __STV_NAME(add_elem)(__STV_SELF2_ __ST_TYPE e)
     __ST_COUNT_TYPE i;
     if(__STV_FIELD_(vector) == NULL)
         return;
+    __STV_FIELD_(num)++;
     if(e < __STV_FIELD_(start)) {
         __STV_FIELD_(below)++;
-        __STV_FIELD_(num)++;
         return;
     }
     i = (e - __STV_FIELD_(start)) / __STV_FIELD_(step);
@@ -401,12 +401,12 @@ __ST_INLINE_ void __STV_NAME(add_elem)(__STV_SELF2_ __ST_TYPE e)
         __STV_FIELD_(vector)[i]++;
     else
         __STV_FIELD_(above)++;
-    __STV_FIELD_(num)++;
 }
 
 __ST_INLINE_ void __STV_NAME(init)(__STV_SELF2_ __ST_TYPE _start,
         __ST_COUNT_TYPE _count, __ST_COUNT_TYPE _step)
 {
+    __ST_COUNT_TYPE size;
     if(_step < 1)
         _step = 1; /* Minimum step*/
     __STV_FIELD_(step) = _step;
@@ -417,8 +417,9 @@ __ST_INLINE_ void __STV_NAME(init)(__STV_SELF2_ __ST_TYPE _start,
     __STV_FIELD_(num) = 0;
     __STV_FIELD_(below) = 0;
     __STV_FIELD_(above) = 0;
-    __STV_FIELD_(vector) = (__ST_COUNT_TYPE *)
-        malloc(sizeof(__ST_COUNT_TYPE) * __STV_FIELD_(count));
+    size = sizeof(__ST_COUNT_TYPE) * __STV_FIELD_(count);
+    __STV_FIELD_(vector) = (__ST_COUNT_TYPE *)malloc(size);
+    memset(__STV_FIELD_(vector), 0, size);
 }
 
 __ST_INLINE_ void __STV_NAME(remove)(__STV_SELF_)
