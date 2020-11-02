@@ -4,22 +4,30 @@
 #ifndef __NSL_STATISTICS__H__
 #define __NSL_STATISTICS__H__
 
+/* To Force C syntax under C++ define ST_USE_C before including */
+#ifdef __cplusplus
+#if __cplusplus < 201103L
+#include <stdint.h>
+#else
+#include <cstdint>
+#endif
+#include <cstdlib>
+#include <cstring>
+#include <cfloat>
+#include <cmath>
+#ifndef ST_USE_C
+#define __ST_USE_CPP_ /* Use C++ syntax */
+#endif /* ST_USE_C */
+/* use C++ max and min functions */
+#include <algorithm>
+#define __ST_MAX(a,b) std::max(a,b)
+#define __ST_MIN(a,b) std::min(a,b)
+#else /* __cplusplus */
 #include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 #include <float.h>
 #include <math.h>
-
-/* To Force C syntax under C++ define ST_USE_C before including */
-#ifdef __cplusplus
-#ifndef ST_USE_C
-#define __ST_USE_CPP_ /* Use C++ syntax */
-#endif /* ST_USE_C */
-#include <algorithm>
-/* use C++ max and min functions */
-#define __ST_MAX(a,b) std::max(a,b)
-#define __ST_MIN(a,b) std::min(a,b)
-#else /* __cplusplus */
 #ifndef __STDC_VERSION__
 /* C89 does not support sqrtl() */
 #define __ST_MEAN_TYPE double /* Mean type */
@@ -60,38 +68,38 @@
 #define __ST_TYPE int64_t
 #endif /* ST_USE_TYPE */
 
-#ifndef __UINT8_MAX__
-#define __UINT8_MAX__  (0xff)
+#ifndef UINT8_MAX
+#define UINT8_MAX  (0xff)
 #endif
-#ifndef __UINT16_MAX__
-#define __UINT16_MAX__ (0xffff)
+#ifndef UINT16_MAX
+#define UINT16_MAX (0xffff)
 #endif
-#ifndef __UINT32_MAX__
-#define __UINT32_MAX__ (0xffffffffU)
+#ifndef UINT32_MAX
+#define UINT32_MAX (0xffffffffU)
 #endif
-#ifndef __UINT64_MAX__
-#define __UINT64_MAX__ (0xffffffffffffffffUL)
+#ifndef UINT64_MAX
+#define UINT64_MAX (0xffffffffffffffffUL)
 #endif
-#ifndef __INT8_MAX__
-#define __INT8_MAX__   (0x7f)
+#ifndef INT8_MAX
+#define INT8_MAX   (0x7f)
 #endif
-#ifndef __INT16_MAX__
-#define __INT16_MAX__  (0x7fff)
+#ifndef INT16_MAX
+#define INT16_MAX  (0x7fff)
 #endif
-#ifndef __INT32_MAX__
-#define __INT32_MAX__  (0x7fffffff)
+#ifndef INT32_MAX
+#define INT32_MAX  (0x7fffffff)
 #endif
-#ifndef __INT64_MAX__
-#define __INT64_MAX__  (0x7fffffffffffffffL)
+#ifndef INT64_MAX
+#define INT64_MAX  (0x7fffffffffffffffL)
 #endif
-#ifndef __FLT_MAX__
-#define __FLT_MAX__    (3.40282346638528859812e+38F)
+#ifndef FLT_MAX
+#define FLT_MAX    (3.40282346638528859812e+38F)
 #endif
-#ifndef __DBL_MAX__
-#define __DBL_MAX__    ((double)1.79769313486231570815e+308L)
+#ifndef DBL_MAX
+#define DBL_MAX    ((double)1.79769313486231570815e+308L)
 #endif
-#ifndef __LDBL_MAX__
-#define __LDBL_MAX__   ((long double)(1.18973149535723176502e+4932L)
+#ifndef LDBL_MAX
+#define LDBL_MAX   ((long double)(1.18973149535723176502e+4932L)
 #endif
 
 #define __ST_MYSELF nsl_stats
@@ -234,61 +242,57 @@ __ST_INLINE_ void __ST_NAME(init)(__ST_SELF_)
 
     /* Geting the Maximum and minimum depend on element type */
     if(m / 10 > 0) { /* Floating type */
-#pragma GCC diagnostic ignored "-Woverflow"
         switch(sizeof(__ST_TYPE)) {
             case sizeof(float):
-                __ST_FIELD_(min) = __FLT_MAX__;
+                __ST_FIELD_(min) = (__ST_TYPE)FLT_MAX;
                 break;
             case sizeof(double):
-                __ST_FIELD_(min) = __DBL_MAX__;
+                __ST_FIELD_(min) = (__ST_TYPE)DBL_MAX;
                 break;
             default: /* Must be: long double */
-                __ST_FIELD_(min) = __LDBL_MAX__;
+                __ST_FIELD_(min) = (__ST_TYPE)LDBL_MAX;
                 break;
-#pragma GCC diagnostic warning "-Woverflow"
         }
         __ST_FIELD_(max) = -(__ST_FIELD_(min));
     } else if(m - 2 > 0) { /* unsigned Integer type */
         switch(sizeof(__ST_TYPE)) {
             case 1:
-                __ST_FIELD_(min) = __UINT8_MAX__;
+                __ST_FIELD_(min) = (__ST_TYPE)UINT8_MAX;
                 break;
             case 2:
-                __ST_FIELD_(min) = __UINT16_MAX__;
+                __ST_FIELD_(min) = (__ST_TYPE)UINT16_MAX;
                 break;
             case 4:
-                __ST_FIELD_(min) = __UINT32_MAX__;
+                __ST_FIELD_(min) = (__ST_TYPE)UINT32_MAX;
                 break;
             case 8:
-                __ST_FIELD_(min) = __UINT64_MAX__;
+                __ST_FIELD_(min) = (__ST_TYPE)UINT64_MAX;
                 break;
             default: /* Must be: 128 bits */
                 /* Does not have a macro so calculate the value */
                 /* m = 1; */
-                __ST_FIELD_(min) = (m + __UINT64_MAX__) * __UINT64_MAX__ +
-                    __UINT64_MAX__;
+                __ST_FIELD_(min) = (m + UINT64_MAX) * UINT64_MAX + UINT64_MAX;
                 break;
         }
         __ST_FIELD_(max) = 0;
     } else { /* Signed Integer type */
         switch(sizeof(__ST_TYPE)) {
             case 1:
-                __ST_FIELD_(min) = __INT8_MAX__;
+                __ST_FIELD_(min) = (__ST_TYPE)INT8_MAX;
                 break;
             case 2:
-                __ST_FIELD_(min) = __INT16_MAX__;
+                __ST_FIELD_(min) = (__ST_TYPE)INT16_MAX;
                 break;
             case 4:
-                __ST_FIELD_(min) = __INT32_MAX__;
+                __ST_FIELD_(min) = (__ST_TYPE)INT32_MAX;
                 break;
             case 8:
-                __ST_FIELD_(min) = __INT64_MAX__;
+                __ST_FIELD_(min) = (__ST_TYPE)INT64_MAX;
                 break;
             default: /* Must be: 128 bits */
                 /* Does not have a macro so calculate the value */
                 /* m = 1; */
-                __ST_FIELD_(min) = (m + __UINT64_MAX__) * __INT64_MAX__ +
-                    __UINT64_MAX__;
+                __ST_FIELD_(min) = (m + UINT64_MAX) * INT64_MAX + UINT64_MAX;
                 break;
         }
         __ST_FIELD_(max) = -(__ST_FIELD_(min)) - 1;
@@ -442,10 +446,12 @@ __ST_INLINE_ int __STV_NAME(copy)(__STV_SELF2_ const __STV_OTHER)
         __STV_FIELD_(above) = ost->__STV_FIELD_NAME_(above);
         if(ost->__STV_FIELD_NAME_(vector) != NULL)
         {
-            __ST_COUNT_TYPE size = sizeof(__ST_COUNT_TYPE) * __STV_FIELD_(count);
+            __ST_COUNT_TYPE size = sizeof(__ST_COUNT_TYPE) *
+                                   __STV_FIELD_(count);
             __STV_FIELD_(vector) = (__ST_COUNT_TYPE *)malloc(size);
             if(__STV_FIELD_(vector) != NULL)
-                memcpy(__STV_FIELD_(vector), ost->__STV_FIELD_NAME_(vector), size);
+                memcpy(__STV_FIELD_(vector), ost->__STV_FIELD_NAME_(vector),
+                       size);
         } else
             __STV_FIELD_(vector) = NULL;
         return (1 == 1);
@@ -499,5 +505,6 @@ __ST_INLINE_ int __STV_NAME(copy)(__STV_SELF2_ const __STV_OTHER)
 #undef __STV_SELF_
 #undef __STV_SELF2_
 #undef __STV_ME_
+#undef __STV_OTHER
 
 #endif/*__NSL_STATISTICS__H__*/
