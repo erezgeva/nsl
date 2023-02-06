@@ -27,22 +27,22 @@ void print_vec(struct nsl_vec_stats *v, const char *msg)
 }
 int main()
 {
-    struct nsl_stats s;
-    nsl_stats_init(&s);
+    struct nsl_stats s0, *s = &s0;
+    nsl_stats_init(s);
     printf("min " format ", max " format "\n",
-            nsl_stats_get_min(&s),
-            nsl_stats_get_max(&s));
-    nsl_stats_add_elem(&s, 10);
-    nsl_stats_add_elem(&s, 20);
-    nsl_stats_add_elem(&s, 30);
+            nsl_stats_get_min(s),
+            nsl_stats_get_max(s));
+    nsl_stats_add_elem(s, 10);
+    nsl_stats_add_elem(s, 20);
+    nsl_stats_add_elem(s, 30);
     printf("count " uformat ", min " format ", max " format ", "
            "avg " avformat ", sq " avformat ", sd " avformat "\n",
-            nsl_stats_get_num_elems(&s),
-            nsl_stats_get_min(&s),
-            nsl_stats_get_max(&s),
-            nsl_stats_get_mean(&s),
-            nsl_stats_get_sq(&s),
-            nsl_stats_get_sd(&s));
+            nsl_stats_get_num_elems(s),
+            nsl_stats_get_min(s),
+            nsl_stats_get_max(s),
+            nsl_stats_get_mean(s),
+            nsl_stats_get_sq(s),
+            nsl_stats_get_sd(s));
     printf("===============================================\n");
     struct nsl_vec_stats v0, *v = &v0;
     nsl_vec_stats_init(v, 10,5,10);
