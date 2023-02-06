@@ -1,2 +1,5 @@
-test1
-test2
+/*.o
+/cmp_c_*
+/cmp_cpp_*
+/utest
+.*.sw?
