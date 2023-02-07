@@ -1,3 +1,6 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-FileCopyrightText: Copyright 2018 Erez Geva
+
 CPPFLAGS:=-Wall -Wextra -Winline -g
 LDLIBS:=-lm
 ALL=cmp_c_ansi cmp_c_89 cmp_c_99 cmp_cpp_ansi cmp_cpp_98 cmp_cpp_11 utest

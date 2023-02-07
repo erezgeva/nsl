@@ -1,3 +1,6 @@
+/* SPDX-License-Identifier: GPL-3.0-or-later
+   SPDX-FileCopyrightText: Copyright 2018 Erez Geva */
+
 #include <stdio.h>
 #include "nsl_statistics.h"
 #define format "%ld"

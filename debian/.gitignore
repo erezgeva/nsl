@@ -1,0 +1,8 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-FileCopyrightText: Copyright 2023 Erez Geva
+
+/.debhelper/
+/debhelper-build-stamp
+/files
+/nsl-statistics-lib-dev.substvars
+/nsl-statistics-lib-dev/
