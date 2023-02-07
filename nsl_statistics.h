@@ -1,5 +1,5 @@
-/* SPDX-License-Identifier: MIT */
-/* Copyright (c) 2018 Erez Geva */
+/* SPDX-License-Identifier: MIT
+   SPDX-FileCopyrightText: Copyright 2018 Erez Geva */
 
 #ifndef __NSL_STATISTICS__H__
 #define __NSL_STATISTICS__H__
