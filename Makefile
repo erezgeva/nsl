@@ -3,7 +3,8 @@
 
 CPPFLAGS:=-Wall -Wextra -Winline -g
 LDLIBS:=-lm
-ALL=cmp_c_ansi cmp_c_89 cmp_c_99 cmp_cpp_ansi cmp_cpp_98 cmp_cpp_11 utest
+ALL=cmp_c_ansi cmp_c_89 cmp_c_99 cmp_cpp_ansi cmp_cpp_98 cmp_cpp_11 cmp_cpp_17\
+    utest
 all: $(ALL)
 clean:
 	$(RM) $(ALL) *.o
@@ -20,6 +21,8 @@ cmp_cpp_98: cmp_cpp.cpp
 	$(CXX) $(CPPFLAGS) -std=c++98 $< $(LDLIBS) -o $@
 cmp_cpp_11: cmp_cpp.cpp
 	$(CXX) $(CPPFLAGS) -std=c++11 $< $(LDLIBS) -o $@
+cmp_cpp_17: cmp_cpp.cpp
+	$(CXX) $(CPPFLAGS) -std=c++17 $< $(LDLIBS) -o $@
 
 utest.o:
 	printf 'int main(int argc,char**argv)%s'\

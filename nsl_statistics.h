@@ -6,6 +6,9 @@
 
 /* To Force C syntax under C++ define ST_USE_C before including */
 #ifdef __cplusplus
+#if __cplusplus >= 201603L /* C++17 */
+#define __ST_REGISTER
+#endif
 #if __cplusplus < 201103L
 #include <stdint.h>
 #else
@@ -35,6 +38,9 @@
 #endif /* __STDC_VERSION__ */
 #endif /* __cplusplus */
 
+#ifndef __ST_REGISTER
+#define __ST_REGISTER register
+#endif
 #define __ST_COUNT_TYPE uint64_t /* Count type */
 #ifndef __ST_MEAN_TYPE
 #define __ST_MEAN_TYPE long double /* Mean type */
@@ -162,8 +168,8 @@ public:
 
 __ST_INLINE_ void __ST_NAME(add_elem)(__ST_SELF2_ __ST_TYPE e)
 {
-    register __ST_MEAN_TYPE elem = e;
-    register __ST_MEAN_TYPE N = ++(__ST_FIELD_(num));
+    __ST_REGISTER __ST_MEAN_TYPE elem = e;
+    __ST_REGISTER __ST_MEAN_TYPE N = ++(__ST_FIELD_(num));
     __ST_FIELD_(min) = __ST_MIN(__ST_FIELD_(min), e);
     __ST_FIELD_(max) = __ST_MAX(__ST_FIELD_(max), e);
     __ST_FIELD_(mean) += ((__ST_MEAN_TYPE)elem - __ST_FIELD_(mean)) / N;
@@ -208,7 +214,7 @@ __ST_INLINE_ __ST_MEAN_TYPE __ST_NAME_GET(variance)(__ST_SELF_)
 {   /* variance for standard deviation
        Corrected sample standard deviation (Bessel's correction)
        divide by (N - 1) instead of (N) */
-    register __ST_MEAN_TYPE N = __ST_FIELD_(num);
+    __ST_REGISTER __ST_MEAN_TYPE N = __ST_FIELD_(num);
     return __ST_NAME_GET(tss)(__ST_SELF_VAR_) * (N / (N - 1));
 }
 __ST_INLINE_ __ST_MEAN_TYPE __ST_NAME_GET(sd)(__ST_SELF_)
@@ -225,7 +231,7 @@ __ST_INLINE_ __ST_MEAN_TYPE __ST_NAME_GET(tss_cut)(__ST_SELF_)
 }
 __ST_INLINE_ __ST_MEAN_TYPE __ST_NAME_GET(variance_cut)(__ST_SELF_)
 {
-    register __ST_MEAN_TYPE N = __ST_FIELD_(num_cut);
+    __ST_REGISTER __ST_MEAN_TYPE N = __ST_FIELD_(num_cut);
     return __ST_NAME_GET(tss_cut)(__ST_SELF_VAR_) * (N / (N - 1));
 }
 __ST_INLINE_ __ST_MEAN_TYPE __ST_NAME_GET(sd_cut)(__ST_SELF_)
@@ -482,6 +488,7 @@ __ST_INLINE_ int __STV_NAME(copy)(__STV_SELF2_ const __STV_OTHER)
 #endif
 
 #undef __ST_USE_CPP_
+#undef __ST_REGISTER
 #undef __ST_TYPE
 #undef __ST_COUNT_TYPE
 #undef __ST_MEAN_TYPE
