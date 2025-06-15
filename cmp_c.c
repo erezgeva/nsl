@@ -5,10 +5,10 @@
 #include "nsl_statistics.h"
 #define format "%ld"
 #define uformat "%lu"
-#ifdef __STDC_VERSION__
-#define avformat "%Lf"
-#else
+#if !defined __STDC_VERSION__ || __STDC_VERSION__ < 199901L /* C99 */
 #define avformat "%lf"
+#else
+#define avformat "%Lf"
 #endif
 void print_vec(struct nsl_vec_stats *v, const char *msg)
 {

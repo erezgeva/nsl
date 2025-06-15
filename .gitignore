@@ -4,5 +4,7 @@
 /*.o
 /cmp_c_*
 /cmp_cpp_*
+/cmp_gnuc_*
+/cmp_gnucpp_*
 /utest
 .*.sw?

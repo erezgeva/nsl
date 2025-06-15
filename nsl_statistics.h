@@ -9,8 +9,9 @@
 #if __cplusplus >= 201603L /* C++17 */
 #define __ST_REGISTER
 #endif
-#if __cplusplus < 201103L
+#if __cplusplus < 201103L /* C++11 */
 #include <stdint.h>
+#define __ST_SQRT(a) sqrt(a) /* Use sqrt for long double */
 #else
 #include <cstdint>
 #endif
@@ -31,16 +32,20 @@
 #include <string.h>
 #include <float.h>
 #include <math.h>
-#ifndef __STDC_VERSION__
-/* C89 does not support sqrtl() */
+#if !defined __STDC_VERSION__ || __STDC_VERSION__ < 199901L /* C99 */
 #define __ST_MEAN_TYPE double /* Mean type */
-#define __ST_SQRT(a) sqrt(a) /* Use sqrt for long double */
+#define __ST_SQRT(a) sqrt(a) /* Use sqrt for double */
 #endif /* __STDC_VERSION__ */
 #endif /* __cplusplus */
 
+#ifdef ST_SKIP_REGISTER
+#undef __ST_REGISTER
+#define __ST_REGISTER
+#else
 #ifndef __ST_REGISTER
 #define __ST_REGISTER register
 #endif
+#endif /* ST_SKIP_REGISTER */
 #define __ST_COUNT_TYPE uint64_t /* Count type */
 #ifndef __ST_MEAN_TYPE
 #define __ST_MEAN_TYPE long double /* Mean type */
@@ -247,7 +252,7 @@ __ST_INLINE_ void __ST_NAME(init)(__ST_SELF_)
     __ST_FIELD_(mean_cut) = __ST_FIELD_(sq_cut) = 0;
 
     /* Geting the Maximum and minimum depend on element type */
-    if(m / 10 > 0) { /* Floating type */
+    if(m / 2 > 0) { /* Floating type */
         switch(sizeof(__ST_TYPE)) {
             case sizeof(float):
                 __ST_FIELD_(min) = (__ST_TYPE)FLT_MAX;
@@ -392,8 +397,7 @@ __ST_INLINE_ __ST_COUNT_TYPE __STV_NAME_GET(value)(__STV_SELF2_ __ST_TYPE e)
     i = (e - __STV_FIELD_(start)) / __STV_FIELD_(step);
     if(i < __STV_FIELD_(count))
         return __STV_FIELD_(vector)[i];
-    else
-        return __STV_FIELD_(above);
+    return __STV_FIELD_(above);
 }
 
 __ST_INLINE_ void __STV_NAME(add_elem)(__STV_SELF2_ __ST_TYPE e)
