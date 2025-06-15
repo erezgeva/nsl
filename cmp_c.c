@@ -1,5 +1,5 @@
 /* SPDX-License-Identifier: GPL-3.0-or-later
-   SPDX-FileCopyrightText: Copyright 2018 Erez Geva */
+   SPDX-FileCopyrightText: Copyright © 2018 Erez Geva <ErezGeva2@gmail.com> */
 
 #include <stdio.h>
 #include "nsl_statistics.h"

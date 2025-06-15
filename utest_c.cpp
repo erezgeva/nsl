@@ -1,5 +1,5 @@
 /* SPDX-License-Identifier: GPL-3.0-or-later
-   SPDX-FileCopyrightText: Copyright 2023 Erez Geva */
+   SPDX-FileCopyrightText: Copyright © 2023 Erez Geva <ErezGeva2@gmail.com> */
 
 #include <gtest/gtest.h>
 #define ST_USE_C

@@ -1,5 +1,5 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
-# SPDX-FileCopyrightText: Copyright 2018 Erez Geva
+# SPDX-FileCopyrightText: Copyright © 2018 Erez Geva <ErezGeva2@gmail.com>
 
 define c_cmp
 cmp_c_$1: cmp_c.c

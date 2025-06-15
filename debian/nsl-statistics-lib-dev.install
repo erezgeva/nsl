@@ -1,5 +1,5 @@
 #!/usr/bin/dh-exec
 # SPDX-License-Identifier: GPL-3.0-or-later
-# SPDX-FileCopyrightText: Copyright 2018 Erez Geva
+# SPDX-FileCopyrightText: Copyright © 2018 Erez Geva <ErezGeva2@gmail.com>
 
 nsl_statistics.h usr/include
