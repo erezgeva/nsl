@@ -7,13 +7,11 @@
 ###############################################################################
 down_lic()
 {
-  if [[ -f "LICENSES/$1.txt" ]] || [[ -z "$(which reuse)" ]]; then
-    return
-  fi
-  reuse download $1
+  [[ -f "LICENSES/$1.txt" ]] || reuse download $1
 }
 main()
 {
+ [[ -n "$(which reuse)" ]] || return
  mkdir -p LICENSES
  local n
  for n in GPL-3.0-or-later GFDL-1.3-no-invariants-or-later MIT
