@@ -1,0 +1,15 @@
+version = 1
+SPDX-PackageName = "nsl-statistics-lib"
+SPDX-PackageSupplier = "Erez Geva <ErezGeva2@gmail.com>"
+
+[[annotations]]
+path = "debian/changelog"
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2018 © Erez Geva"
+SPDX-License-Identifier = "GFDL-1.3-no-invariants-or-later"
+
+[[annotations]]
+path = ["debian/co**", "debian/source/format"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2018 © Erez Geva"
+SPDX-License-Identifier = "GPL-3.0-or-later"
