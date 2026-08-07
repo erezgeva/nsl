@@ -1,0 +1,55 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-FileCopyrightText: Copyright © 2026 Erez Geva <ErezGeva2@gmail.com>
+#
+# @author Erez Geva <ErezGeva2@@gmail.com>
+# @copyright © 2026 Erez Geva
+#
+# GitHub Continuous Integration script
+###############################################################################
+
+name: CI
+
+# On evry push and Pull Request (PR)
+on: [push, pull_request, workflow_dispatch]
+
+permissions:
+  contents: read
+
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        names: [deb.forky, deb.trixie, rpmbuild, pacmanbuild]
+      fail-fast: false
+    container:
+      image: ghcr.io/erezgeva/${{ matrix.names }}:latest
+
+    env:
+      USER: builder
+
+    steps:
+
+    - name: checkout repository
+      uses: actions/checkout@v6
+      with:
+        persist-credentials: false
+
+    - name: continuous integration
+      run: |
+        chown -R $USER:$USER ..
+        su $USER -c ./ci.sh
+
+  ci_macos:
+    runs-on: macos-latest
+
+    steps:
+
+    - name: checkout repository
+      uses: actions/checkout@v6
+      with:
+        persist-credentials: false
+
+    - name: continuous integration
+      run: ./ci.sh

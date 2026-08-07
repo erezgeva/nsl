@@ -2,9 +2,7 @@
 # SPDX-FileCopyrightText: Copyright © 2023 Erez Geva <ErezGeva2@gmail.com>
 
 /*.o
-/cmp_c_*
-/cmp_cpp_*
-/cmp_gnuc_*
-/cmp_gnucpp_*
+/out/
 /utest
+/config.h
 .*.sw?

@@ -1,31 +1,34 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: Copyright © 2018 Erez Geva <ErezGeva2@gmail.com>
 
+OUT:=out
+HCFG:=config.h
+
 define c_cmp
-cmp_c_$1: cmp_c.c
+$(OUT)/cmp_c_$1: cmp_c.c | $(HCFG) $(OUT)
 	$(CC) $(CPPFLAGS) -std=c$1 $$< $(LDLIBS) -o $$@
 
-cmp_gnuc_$1: cmp_c.c
+$(OUT)/cmp_gnuc_$1: cmp_c.c | $(HCFG) $(OUT)
 	$(CC) $(CPPFLAGS) -std=gnu$1 $$< $(LDLIBS) -o $$@
 
-cmp_c_lang_$1: cmp_c.c
+$(OUT)/cmp_c_lang_$1: cmp_c.c | $(HCFG) $(OUT)
 	$(CCLANG) $(CPPFLAGS) -std=c$1 $$< $(LDLIBS) -o $$@
 
-cmp_gnuc_lang_$1: cmp_c.c
+$(OUT)/cmp_gnuc_lang_$1: cmp_c.c | $(HCFG) $(OUT)
 	$(CCLANG) $(CPPFLAGS) -std=gnu$1 $$< $(LDLIBS) -o $$@
 
 endef
 define cpp_cmp
-cmp_cpp_$1: cmp_cpp.cpp
+$(OUT)/cmp_cpp_$1: cmp_cpp.cpp | $(HCFG) $(OUT)
 	$(CXX) $(CPPFLAGS) -std=c++$1 $$< $(LDLIBS) -o $$@
 
-cmp_gnucpp_$1: cmp_cpp.cpp
+$(OUT)/cmp_gnucpp_$1: cmp_cpp.cpp | $(HCFG) $(OUT)
 	$(CXX) $(CPPFLAGS) -std=gnu++$1 $$< $(LDLIBS) -o $$@
 
-cmp_cpp_lang_$1: cmp_cpp.cpp
+$(OUT)/cmp_cpp_lang_$1: cmp_cpp.cpp | $(HCFG) $(OUT)
 	$(CXXLANG) $(CPPFLAGS) $(CLANG_FLAGS) -std=c++$1 $$< $(LDLIBS) -o $$@
 
-cmp_gnucpp_lang_$1: cmp_cpp.cpp
+$(OUT)/cmp_gnucpp_lang_$1: cmp_cpp.cpp | $(HCFG) $(OUT)
 	$(CXXLANG) $(CPPFLAGS) $(CLANG_FLAGS) -std=gnu++$1 $$< $(LDLIBS) -o $$@
 
 endef
@@ -39,26 +42,31 @@ CLANG_FLAGS:=-Wno-deprecated-register
 LDLIBS:=-lm
 C_STD:=89 99 11 17 2x
 CPP_STD:=98 11 14 17 20
-ALL:=$(addprefix cmp_c_,$(C_STD) 95 ansi)\
-     $(foreach n,$(C_STD),cmp_gnuc_$(n) cmp_c_lang_$(n) cmp_gnuc_lang_$(n))\
-     $(addprefix cmp_cpp_,$(CPP_STD) 23 ansi skip)\
-     $(addprefix cmp_gnucpp_,$(CPP_STD) 23)\
-     $(foreach n,$(CPP_STD),cmp_cpp_lang_$(n) cmp_gnucpp_lang_$(n))\
-     utest
+ALL:=$(addprefix $(OUT)/cmp_c_,$(C_STD) 95 ansi)\
+     $(foreach n,$(C_STD),$(OUT)/cmp_gnuc_$(n) $(OUT)/cmp_c_lang_$(n)\
+                 $(OUT)/cmp_gnuc_lang_$(n))\
+     $(addprefix $(OUT)/cmp_cpp_,$(CPP_STD) 23 ansi skip)\
+     $(addprefix $(OUT)/cmp_gnucpp_,$(CPP_STD) 23)\
+     $(foreach n,$(CPP_STD),$(OUT)/cmp_cpp_lang_$(n) $(OUT)/cmp_gnucpp_lang_$(n))\
 
 all: $(ALL)
 clean:
-	$(RM) $(ALL) *.o
+	$(RM) -rf $(OUT) *.o utest
+
+$(OUT):
+	mkdir -p $@
+$(HCFG):
+	./probe.sh $@
 
 $(eval $(foreach n,$(C_STD),$(call c_cmp,$n)))
 $(eval $(foreach n,$(CPP_STD) 23,$(call cpp_cmp,$n)))
-cmp_c_ansi: cmp_c.c
+$(OUT)/cmp_c_ansi: cmp_c.c | $(HCFG) $(OUT)
 	$(CC) $(CPPFLAGS) -ansi $< $(LDLIBS) -o $@
-cmp_c_95: cmp_c.c
+$(OUT)/cmp_c_95: cmp_c.c | $(HCFG) $(OUT)
 	$(CC) $(CPPFLAGS) -std=iso9899:199409 $< $(LDLIBS) -o $@
-cmp_cpp_ansi: cmp_cpp.cpp
+$(OUT)/cmp_cpp_ansi: cmp_cpp.cpp | $(HCFG) $(OUT)
 	$(CXX) $(CPPFLAGS) -ansi $< $(LDLIBS) -o $@
-cmp_cpp_skip: cmp_cpp.cpp
+$(OUT)/cmp_cpp_skip: cmp_cpp.cpp | $(HCFG) $(OUT)
 	$(CXX) $(CPPFLAGS) -DST_SKIP_REGISTER -std=c++98 $< $(LDLIBS) -o $@
 
 utest.o:

@@ -3,8 +3,7 @@
 
 #include <stdio.h>
 #include "nsl_statistics.h"
-#define format "%ld"
-#define uformat "%lu"
+#include "config.h"
 #if !defined __STDC_VERSION__ || __STDC_VERSION__ < 199901L /* C99 */
 #define avformat "%lf"
 #else

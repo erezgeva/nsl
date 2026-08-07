@@ -3,13 +3,9 @@
 
 #include <stdio.h>
 #include "nsl_statistics.h"
-#define format "%ld"
-#define uformat "%lu"
+#include "config.h"
 // C++ uses one format
 #define avformat "%Lf"
-// C++ uses one format
-// C++ uses one format
-// C++ uses one format
 void print_vec(nsl_vec_stats &v, const char *msg)
 {
     printf("%s: blow " uformat ", above " uformat ", "
