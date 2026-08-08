@@ -5,4 +5,6 @@
 /out/
 /utest
 /config.h
+/rpm/
+/nsl-statistics-lib-*.txz
 .*.sw?

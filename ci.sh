@@ -97,7 +97,7 @@ main()
          make deb
          ;;
        fedora|redhat)
-         echo "make rpm"
+         make rpm
          ;;
        arch)
          echo "make pkg"
