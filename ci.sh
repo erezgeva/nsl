@@ -64,6 +64,9 @@ main()
 {
  local n m nocolor out dist curOut
  local -i last_ret jobs=1 # Number of Make parallel jobs
+ if [[ "$GITHUB_ACTIONS" = "true" ]] && [[ $(id -u) -ne 0 ]]; then
+   nocolor=yes
+ fi
  while getopts 'oj:' opt; do
    case $opt in
      o)
@@ -80,7 +83,7 @@ main()
  # Make sure we output to STDOUT directly, no pipes
  # check our teminal support coulors
  if [[ -z "$nocolor" ]] && [[ -t 1 ]] && tput setaf 1; then
-   local -r esc=`printf '\e['`
+   local -r esc=$(printf '\e[')
    local -r color_red=${esc}31m
    local -r color_blue=${esc}34m
    local -r color_norm=${esc}00m
@@ -88,10 +91,15 @@ main()
  fi
  case $(uname) in
    Linux)
+     # Compile with all standards and the unit tests
      make -j$jobs all utest
+     # Run the unit tests
      ./utest
+     # Compare all standards tests
      cmp_cmp
+     # Get Linux distribution
      distribution
+     # Build packages on specific distribution
      case $dist in
        debian)
          make deb
@@ -104,10 +112,13 @@ main()
          ;;
      esac
      ;;
-   Darwin)
+   Darwin) # MacOS
+     # Find latest GCC compiler
+     # As cc and gcc are linked to clang
      local -i i=20
      until which gcc-$i > /dev/null;do i+=-1;done
      make -j$jobs CC=gcc-$i CXX=g++-$i
+     # Compare all standards tests
      cmp_cmp
      ;;
    *)
