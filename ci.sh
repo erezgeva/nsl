@@ -92,7 +92,7 @@ main()
  case $(uname) in
    Linux)
      # Compile with all standards and the unit tests
-     make -j$jobs all all_clang utest
+     make -j$jobs
      # Run the unit tests
      ./utest
      # Compare all standards tests
@@ -102,13 +102,13 @@ main()
      # Build packages on specific distribution
      case $dist in
        debian)
-         make deb
+         make -j$jobs deb
          ;;
        fedora|redhat)
-         make rpm
+         make -j$jobs rpm
          ;;
        arch)
-         make pkg
+         make -j$jobs pkg
          ;;
      esac
      ;;
@@ -117,13 +117,13 @@ main()
      # As cc and gcc are linked to clang
      local -i i=20
      until which gcc-$i > /dev/null;do i+=-1;done
-     make -j$jobs CC=gcc-$i CXX=g++-$i all all_clang
+     make -j$jobs CC=gcc-$i CXX=g++-$i all_gcc all_clang
      # Compare all standards tests
      cmp_cmp
      ;;
    MINGW64*)
      # Compile with all standards and the unit tests
-     make -j$jobs ST_MEAN_TYPE_DOUBLE=1
+     make -j$jobs ST_MEAN_TYPE_DOUBLE=1 all_gcc
      # Compare all standards tests
      cmp_cmp
      ;;

@@ -6,5 +6,7 @@
 /utest
 /config.h
 /rpm/
+/doc/
+/doxygen/
 /nsl-statistics-lib-*.txz
 .*.sw?
