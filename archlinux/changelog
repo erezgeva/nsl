@@ -1,0 +1,16 @@
+* Fri Mar 22 2019 ErezGeva2@gmail.com 0.5-1
+- Fix add_elem.
+- copy return Boolean to indicate if it was copying.
+- copy avoid copying same structure.
+
+* Thu Mar 21 2019 ErezGeva2@gmail.com 0.4-1
+- Add a proper casting to the LDBL_MAX macro
+
+* Tue Mar 05 2019 ErezGeva2@gmail.com 0.3-1
+- Add statistics vector
+
+* Thu Dec 06 2018 ErezGeva2@gmail.com 0.2-1
+- Remove the max and min macros, may conflict with C++ standard functions.
+
+* Mon Sep 24 2018 ErezGeva2@gmail.com 0.1-1
+- Initial release.

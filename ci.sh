@@ -100,7 +100,7 @@ main()
          make rpm
          ;;
        arch)
-         echo "make pkg"
+         make pkg
          ;;
      esac
      ;;

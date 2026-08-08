@@ -58,7 +58,7 @@ all: $(ALL)
 clean:
 	$(RM) -rf $(OUT) *.o utest
 
-.PHONY: all clean install deb srcpkg rpm
+.PHONY: all clean install deb srcpkg rpm pkg
 
 $(OUT) rpm/SOURCES:
 	mkdir -p "$@"
@@ -86,6 +86,9 @@ utest: utest.o utest_cpp.o utest_c.o
 	$(CXX) $(CPPFLAGS) $(LDFLAGS) $^ $(LOADLIBES) $(LDLIBS)\
 	 -lgtest -lpthread -o "$@"
 
+ifeq ($(INSTALL),)
+INSTALL:=install
+endif
 install:
 	$(INSTALL) -m 644 -D nsl_statistics.h -t $(DESTDIR)/usr/include
 
@@ -106,3 +109,14 @@ rpm: $(LIB_SRC) rpm/SOURCES
 	rpmbuild --define "debug_package %nil" --define "_topdir $(PWD)/rpm" \
 	 -bb nsl-statistics-lib.spec
 endif # which rpmbuild
+
+ifneq ($(call which,makepkg),)
+ARCHL_BLD:=archlinux/PKGBUILD
+$(ARCHL_BLD): $(ARCHL_BLD).org | $(LIB_SRC)
+	cp "$<" "$@"
+	cp $(LIB_SRC) archlinux/
+	printf "sha256sums=('%s')\n"\
+	  $(firstword $(shell sha256sum $(LIB_SRC))) >> "$@"
+pkg: $(ARCHL_BLD)
+	cd archlinux && makepkg
+endif # which makepkg

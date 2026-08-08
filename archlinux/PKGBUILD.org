@@ -1,0 +1,38 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-FileCopyrightText: Copyright © 2026 Erez Geva <ErezGeva2@gmail.com>
+#
+# @author Erez Geva <ErezGeva2@@gmail.com>
+# @copyright © 2026 Erez Geva
+#
+# Maintainer: Erez Geva <ErezGeva2@gmail.com>
+###############################################################################
+pkgver=0.5
+pkgrel=0
+pkgname=(nsl-statistics-lib-dev)
+# nsl-statistics-lib-doc
+arch=(any)
+url="https://github.com/erezgeva/nsl"
+license=('MIT')
+#source=("nsl-statistics-lib-$pkgver.txz::https://github.com/erezgeva/nsl/archive/refs/tags/%%{version}.tar.gz")
+source=("nsl-statistics-lib-$pkgver.txz")
+build() {
+  cd nsl-statistics-lib-$pkgver
+  # make --no-print-directory all doxygen
+  # Place here as make do not use packages!
+  make DESTDIR=../install install --no-print-directory
+}
+makedepends=(doxygen graphviz texlive-fontutils pandoc)
+package_nsl-statistics-lib-dev() {
+  pkgdesc='library to calculate statistics while gathering measurements.'
+  mkdir -p $pkgdir/usr
+  mv $srcdir/install/usr/include $pkgdir/usr
+}
+#package_nsl-statistics-lib-doc() {
+#  arch=(any)
+#  license=('GFDL-1.3-no-invariants-or-later')
+#  pkgdesc='library to calculate statistics documentation.'
+#  mkdir -p $pkgdir/usr/share/doc
+#  mv $srcdir/install/usr/share/doc/$pkgname $pkgdir/usr/share/doc
+#}
+changelog=changelog
+# vim: set ft=bash:

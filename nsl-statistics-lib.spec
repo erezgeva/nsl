@@ -12,7 +12,7 @@ Release:        1%{?dist}
 URL:            https://github.com/erezgeva/nsl
 BuildRequires:  doxygen graphviz texlive-epstopdf pandoc
 License:        GPL-3.0-or-later
-#Source0:        https://github.com/erezgeva/%%{name}/archive/refs/tags/%%{version}.tar.gz
+#Source0:        https://github.com/erezgeva/nsl/archive/refs/tags/%%{version}.tar.gz
 Source0:        %{name}-%{version}.txz
 Summary:        library to calculate statistics while gathering measurements.
 %description
@@ -21,6 +21,7 @@ Library to calculate statistics while gathering measurements
 %package        devel
 Summary:        The statistics nsl library header file
 License:        MIT
+BuildArch:      noarch
 Provides:       %{name}-static = %{version}-%{release}
 %description    devel
 The %{name}-devel package contains the library header file.

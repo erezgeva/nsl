@@ -1,0 +1,8 @@
+# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-FileCopyrightText: Copyright © 2026 Erez Geva <ErezGeva2@gmail.com>
+
+/PKGBUILD
+/nsl-statistics-lib-*.txz
+/nsl-statistics-lib-*-any.pkg.tar.zst
+/pkg/
+/src/
