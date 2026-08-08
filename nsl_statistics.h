@@ -4,14 +4,27 @@
 #ifndef __NSL_STATISTICS__H__
 #define __NSL_STATISTICS__H__
 
+#ifdef ST_MEAN_TYPE_DOUBLE
+#define __ST_MEAN_TYPE double /* Mean type */
+#define __ST_SQRT(a) sqrt(a) /* Use sqrt for double */
+#endif
+
+#ifdef ST_SKIP_REGISTER
+#define __ST_REGISTER
+#endif
+
 /* To Force C syntax under C++ define ST_USE_C before including */
 #ifdef __cplusplus
 #if __cplusplus >= 201603L /* C++17 */
+#ifndef __ST_REGISTER
 #define __ST_REGISTER
 #endif
+#endif /* >= C++17 */
 #if __cplusplus < 201103L /* C++11 */
 #include <stdint.h>
+#ifndef __ST_SQRT
 #define __ST_SQRT(a) sqrt(a) /* Use sqrt for long double */
+#endif
 #else
 #include <cstdint>
 #endif
@@ -33,19 +46,18 @@
 #include <float.h>
 #include <math.h>
 #if !defined __STDC_VERSION__ || __STDC_VERSION__ < 199901L /* C99 */
+#ifndef __ST_MEAN_TYPE
 #define __ST_MEAN_TYPE double /* Mean type */
+#endif
+#ifndef __ST_SQRT
 #define __ST_SQRT(a) sqrt(a) /* Use sqrt for double */
+#endif
 #endif /* __STDC_VERSION__ */
 #endif /* __cplusplus */
 
-#ifdef ST_SKIP_REGISTER
-#undef __ST_REGISTER
-#define __ST_REGISTER
-#else
 #ifndef __ST_REGISTER
 #define __ST_REGISTER register
 #endif
-#endif /* ST_SKIP_REGISTER */
 #define __ST_COUNT_TYPE uint64_t /* Count type */
 #ifndef __ST_MEAN_TYPE
 #define __ST_MEAN_TYPE long double /* Mean type */

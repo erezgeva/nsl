@@ -4,8 +4,11 @@
 #include <stdio.h>
 #include "nsl_statistics.h"
 #include "config.h"
-// C++ uses one format
+#ifdef ST_MEAN_TYPE_DOUBLE
+#define avformat "%lf"
+#else
 #define avformat "%Lf"
+#endif
 void print_vec(nsl_vec_stats &v, const char *msg)
 {
     printf("%s: blow " uformat ", above " uformat ", "

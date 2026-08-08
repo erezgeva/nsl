@@ -41,7 +41,7 @@ jobs:
         chown -R $USER:$USER ..
         su $USER -c ./ci.sh
 
-  ci_macos:
+  macos:
     runs-on: macos-latest
 
     steps:
@@ -52,4 +52,17 @@ jobs:
         persist-credentials: false
 
     - name: continuous integration
+      run: ./ci.sh
+  win:
+    runs-on: windows-latest
+
+    steps:
+
+    - name: checkout repository
+      uses: actions/checkout@v6
+      with:
+        persist-credentials: false
+
+    - name: continuous integration
+      shell: bash
       run: ./ci.sh

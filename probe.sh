@@ -14,7 +14,7 @@ main()
   if printf "%s\n%s\nint main(){%s;return 0;}" \
      '#include <stdio.h>' '#include <stdint.h>' \
      'uint64_t x=7;printf("%lu",x);' |\
-     cc -pipe -S -x c - -Werror -o $temp_c &> /dev/null;then
+     cc -pipe -S -x c - -Wall -Wextra -Werror -o tmp.c &> /dev/null;then
     # uint64_t is 'unsigned long'
     echo "#define uformat \"%lu\"" >> $out_h
     # int64_t is 'long'

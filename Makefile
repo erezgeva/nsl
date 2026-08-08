@@ -40,6 +40,9 @@ endef
 CCLANG:=clang
 CXXLANG:=clang++
 CPPFLAGS:=-Wall -Wextra -Winline -Werror -g
+ifdef ST_MEAN_TYPE_DOUBLE
+CPPFLAGS+= -DST_MEAN_TYPE_DOUBLE
+endif
 # We do not care about diagnostic of 'register' keyword
 # We skip it in C++17 and above
 CLANG_FLAGS:=-Wno-deprecated-register
@@ -47,14 +50,15 @@ LDLIBS:=-lm
 C_STD:=89 99 11 17 2x
 CPP_STD:=98 11 14 17 20
 ALL:=$(addprefix $(OUT)/cmp_c_,$(C_STD) 95 ansi)\
-     $(foreach n,$(C_STD),$(OUT)/cmp_gnuc_$(n) $(OUT)/cmp_c_lang_$(n)\
-                 $(OUT)/cmp_gnuc_lang_$(n))\
+     $(foreach n,$(C_STD),$(OUT)/cmp_gnuc_$(n))\
      $(addprefix $(OUT)/cmp_cpp_,$(CPP_STD) 23 ansi skip)\
-     $(addprefix $(OUT)/cmp_gnucpp_,$(CPP_STD) 23)\
+     $(addprefix $(OUT)/cmp_gnucpp_,$(CPP_STD) 23)
+UCL:=$(foreach n,$(C_STD),$(OUT)/cmp_c_lang_$(n) $(OUT)/cmp_gnuc_lang_$(n))\
      $(foreach n,$(CPP_STD),$(OUT)/cmp_cpp_lang_$(n)\
-                 $(OUT)/cmp_gnucpp_lang_$(n))\
+                 $(OUT)/cmp_gnucpp_lang_$(n))
 
 all: $(ALL)
+all_clang: $(UCL)
 clean:
 	$(RM) -rf $(OUT) *.o utest
 

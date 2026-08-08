@@ -92,7 +92,7 @@ main()
  case $(uname) in
    Linux)
      # Compile with all standards and the unit tests
-     make -j$jobs all utest
+     make -j$jobs all all_clang utest
      # Run the unit tests
      ./utest
      # Compare all standards tests
@@ -117,12 +117,15 @@ main()
      # As cc and gcc are linked to clang
      local -i i=20
      until which gcc-$i > /dev/null;do i+=-1;done
-     make -j$jobs CC=gcc-$i CXX=g++-$i
+     make -j$jobs CC=gcc-$i CXX=g++-$i all all_clang
      # Compare all standards tests
      cmp_cmp
      ;;
-   *)
-     echo "uname =|$(uname)|"
+   MINGW64*)
+     # Compile with all standards and the unit tests
+     make -j$jobs ST_MEAN_TYPE_DOUBLE=1
+     # Compare all standards tests
+     cmp_cmp
      ;;
  esac
 }

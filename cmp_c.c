@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include "nsl_statistics.h"
 #include "config.h"
-#if !defined __STDC_VERSION__ || __STDC_VERSION__ < 199901L /* C99 */
+#if defined ST_MEAN_TYPE_DOUBLE || !defined __STDC_VERSION__ || __STDC_VERSION__ < 199901L /* C99 */
 #define avformat "%lf"
 #else
 #define avformat "%Lf"

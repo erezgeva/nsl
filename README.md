@@ -24,4 +24,5 @@ The library have the following properties
 |ST_USE_C   |C structures|C structures|C structures|C++ Classes|Force C++ using C structures|
 |ST_USE_TYPE|set type    |set type    |Use int64_t |Use int64_t|Element in set type         |
 
+ST_MEAN_TYPE_DOUBLE use 'double' and not 'long double'
 ST_SKIP_REGISTER skip using the 'register' keyword.
