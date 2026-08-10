@@ -5,3 +5,5 @@
 %:
 	@dh $@ --parallel
 override_dh_auto_build:
+	$(MAKE) doxygen
+override_dh_auto_install:

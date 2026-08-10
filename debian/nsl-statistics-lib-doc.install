@@ -1,8 +1,5 @@
+#!/usr/bin/dh-exec
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: Copyright © 2026 Erez Geva <ErezGeva2@gmail.com>
 
-/PKGBUILD
-/nsl-statistics-lib-*.txz
-/nsl-statistics-lib-*.pkg.tar.zst
-/pkg/
-/src/
+doc/* usr/share/doc/nsl-statistics-lib-doc

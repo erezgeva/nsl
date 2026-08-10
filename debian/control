@@ -3,10 +3,21 @@ Maintainer: Erez Geva <ErezGeva2@gmail.com>
 Section: libs
 Priority: optional
 Standards-Version: 4.1.4
-Build-Depends: debhelper (>= 9), dh-exec (>=0.3), libtool
+Build-Depends: debhelper (>= 9), texlive-font-utils, pandoc
+Build-Depends-Indep: graphviz, doxygen (>=1.8), dh-exec (>=0.3),
+		     discount, cmark-gfm
+Homepage: https://github.com/erezgeva/nsl
+Vcs-Browser: https://github.com/erezgeva/nsl
+Vcs-Git: https://github.com/erezgeva/nsl
 
 Package: nsl-statistics-lib-dev
 Architecture: all
 Section: libdevel
+Description: New Scientific Library
+ Calculate Arithmetic mean, variance and Standard Deviation on the fly.
+
+Package: nsl-statistics-lib-doc
+Architecture: all
+Section: doc
 Description: New Scientific Library
  Calculate Arithmetic mean, variance and Standard Deviation on the fly.

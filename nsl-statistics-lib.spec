@@ -10,6 +10,7 @@ Name:           nsl-statistics-lib
 Version:        0.5
 Release:        1%{?dist}
 URL:            https://github.com/erezgeva/nsl
+BuildRequires:  discount cmark
 BuildRequires:  doxygen graphviz texlive-epstopdf pandoc
 License:        GPL-3.0-or-later
 #Source0:        https://github.com/erezgeva/nsl/archive/refs/tags/%%{version}.tar.gz
@@ -26,18 +27,18 @@ Provides:       %{name}-static = %{version}-%{release}
 %description    devel
 The %{name}-devel package contains the library header file.
 
-# %package        doc
-# Summary:        Documentation files for the statistics nsl library
-# License:        GFDL-1.3-no-invariants-or-later
-# BuildArch:      noarch
-# %description    doc
-# The statistics nsl library documentation
+%package        doc
+Summary:        Documentation files for the statistics nsl library
+License:        GFDL-1.3-no-invariants-or-later
+BuildArch:      noarch
+%description    doc
+The statistics nsl library documentation
 
 %prep
 %setup -q
 
-# %build
-# %make_build --no-print-directory
+%build
+%make_build --no-print-directory doxygen
 
 %install
 %make_install --no-print-directory
@@ -45,8 +46,8 @@ The %{name}-devel package contains the library header file.
 %files devel
 %{_includedir}/*
 
-# %files doc
-# %{_datadir}/doc/%{name}-doc/*
+%files doc
+%{_datadir}/doc/%{name}-doc/*
 
 %changelog
 * Fri Mar 22 2019 ErezGeva2@gmail.com 0.5-1
@@ -65,3 +66,12 @@ The %{name}-devel package contains the library header file.
 
 * Mon Sep 24 2018 ErezGeva2@gmail.com 0.1-1
 - Initial release.
+
+
+
+
+
+Build-Depends: texlive-font-utils, pandoc
+Build-Depends-Indep: graphviz, doxygen (>=1.8), 
+		     discount, cmark-gfm
+
