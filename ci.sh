@@ -29,6 +29,13 @@ distribution()
  fi
 }
 ###############################################################################
+eacmd()
+{
+ set +e
+ out="`$@ 2>&1`"
+ last_ret=$?
+ set -e
+}
 eecmd()
 {
  set +e
@@ -88,6 +95,16 @@ main()
    local -r color_blue=${esc}34m
    local -r color_norm=${esc}00m
    printf "$color_norm"
+ fi
+ eacmd git rev-parse --is-inside-work-tree
+ if [[ $last_ret -eq 0 ]]; then
+   local -r have_git=true
+ else
+   local -r have_git=false
+ fi
+ if $have_git && [[ -n "$(which reuse 2> /dev/null)" ]]; then
+   # Ensure all files in project are properly copyright
+   reuse lint
  fi
  case $(uname) in
    Linux)
