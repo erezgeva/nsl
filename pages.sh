@@ -15,7 +15,7 @@ apt_install()
 }
 main()
 {
- apt_install doxygen graphviz pdf2svg astyle
+ apt_install doxygen graphviz pdf2svg astyle discount
  make doxygen
  rm -Rf doc/*/latex doc/*/man doc/*/html/*.md5
  mv doc _site

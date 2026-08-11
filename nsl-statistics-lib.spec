@@ -66,12 +66,3 @@ The statistics nsl library documentation
 
 * Mon Sep 24 2018 ErezGeva2@gmail.com 0.1-1
 - Initial release.
-
-
-
-
-
-Build-Depends: texlive-font-utils, pandoc
-Build-Depends-Indep: graphviz, doxygen (>=1.8), 
-		     discount, cmark-gfm
-

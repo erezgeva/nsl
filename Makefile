@@ -4,6 +4,7 @@
 ver_maj:=0
 ver_min:=5
 
+SED:=sed
 OUT:=out
 HCFG:=config.h
 PKG:=nsl-statistics-lib
@@ -89,12 +90,12 @@ $(OUT)/cmp_cpp_skip: cmp_cpp.cpp | $(HEADER) $(HCFG) $(OUT)
 doxygen/c/$(HEADER): $(HEADER)
 	mkdir -p "$(@D)"
 	printf '' | $(CC) -pipe -E -CC -xc - -include $< -o /dev/stdout |\
-	sed -n '/^$$/d;/^#/d;/ @file$$/,$$p' > "$@"
+	$(SED) -n '/^$$/d;/^#/d;/ @file$$/,$$p' > "$@"
 	astyle --project=none --suffix=none "$@"
 doxygen/cpp/$(HEADER): $(HEADER)
 	mkdir -p "$(@D)"
 	printf '' | $(CXX) -pipe -E -CC -xc++ - -include $< -o /dev/stdout |\
-	sed -n '/^$$/d;/^#/d;/ @file$$/,$$p' > "$@"
+	$(SED) -n '/^$$/d;/^#/d;/ @file$$/,$$p' > "$@"
 	astyle --project=none --suffix=none "$@"
 
 doxygen: doxygen/c/$(HEADER) doxygen/cpp/$(HEADER)
@@ -102,6 +103,11 @@ doxygen: doxygen/c/$(HEADER) doxygen/cpp/$(HEADER)
 	cd doxygen &&\
 	doxygen ../doxygen_c.cfg >/dev/null &&\
 	doxygen ../doxygen_cpp.cfg >/dev/null
+	markdown README.md | $(SED)\
+	  -e "4 i <!doctype html><title>nsl-statistics library README</title>"\
+	  -e '/The header API doxygen/,+2d'\
+	  -e 's!https://erezgeva.github.io/nsl/!!;s!/html">C!/html/index.html">C!'\
+	  > doc/index.html
 
 clean_doxygen:
 	$(RM) -rf doc doxygen
@@ -110,17 +116,17 @@ clean_doxygen:
 #c_clean/$(HEADER):
 # mkdir -p "$(@D)"
 # printf '' | $(CC) -pipe -E -xc - -include $< -o /dev/stdout |\
-# sed -n '/^$$/d;/^#/d;/^struct nsl_stats$$/,$$p' > "$@"
+# $(SED) -n '/^$$/d;/^#/d;/^struct nsl_stats$$/,$$p' > "$@"
 # astyle --project=none --suffix=none "$@"
 # diff "doxygen/c/$(HEADER)" "$@" | grep '^<' |\
-# sed 's/[/*<]/ /g;s/ \+$$//;s/^ \+//' > c.txt
+# $(SED) 's/[/*<]/ /g;s/ \+$$//;s/^ \+//' > c.txt
 #cpp_clean/$(HEADER):
 # mkdir -p "$(@D)"
 # printf '' | $(CXX) -pipe -E -xc++ - -include $< -o /dev/stdout |\
-# sed -n '/^$$/d;/^#/d;/^class nsl_stats$$/,$$p' > "$@"
+# $(SED) -n '/^$$/d;/^#/d;/^class nsl_stats$$/,$$p' > "$@"
 # astyle --project=none --suffix=none "$@"
 # diff "doxygen/cpp/$(HEADER)" "$@" |\
-# grep '^<' | sed 's/[/*<]/ /g;s/ \+$$//;s/^ \+//' > cpp.txt
+# grep '^<' | $(SED) 's/[/*<]/ /g;s/ \+$$//;s/^ \+//' > cpp.txt
 #doxclean: doxygen c_clean/$(HEADER) cpp_clean/$(HEADER)
 
 utest.o:
