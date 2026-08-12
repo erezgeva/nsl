@@ -53,8 +53,16 @@ jobs:
 
     - name: continuous integration
       run: ./ci.sh
+
   win:
     runs-on: windows-latest
+    strategy:
+      matrix:
+        compiler: [mingw64,msvc]
+      fail-fast: false
+
+    env:
+      compiler: ${{ matrix.compiler }}
 
     steps:
 
@@ -62,6 +70,13 @@ jobs:
       uses: actions/checkout@v6
       with:
         persist-credentials: false
+
+    # Set MSVC compilers path and environment variables.
+    - name: Setup MSVC
+      if: ${{ env.compiler == 'msvc' }}
+      uses: TheMrMilchmann/setup-msvc-dev@v4
+      with:
+        arch: x64
 
     - name: continuous integration
       shell: bash

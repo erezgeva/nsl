@@ -15,6 +15,15 @@
 #define __ST_REGISTER
 #endif
 
+/* Microsoft C compiler is problematic.
+ * It need some work-around. */
+#ifdef _MSC_VER
+/* The minimum standard for MSVC is C99 */
+#ifndef __STDC_VERSION__
+#define __STDC_VERSION__ 199901L
+#endif
+#endif /* _MSC_VER */
+
 /* To Force C syntax under C++ define ST_USE_C before including */
 #ifdef __cplusplus
 #if __cplusplus >= 201603L /* C++17 */
@@ -58,11 +67,16 @@
 /* Use sqrt for double */
 #define __ST_SQRT(a) sqrt(a)
 #endif
+/* inline was added on C99 */
+#define __ST_C_INLINE  __inline__
 #endif /* __STDC_VERSION__ */
 #endif /* __cplusplus */
 
 #ifndef __ST_REGISTER
 #define __ST_REGISTER register
+#endif
+#ifndef __ST_C_INLINE
+#define __ST_C_INLINE  inline
 #endif
 /* Count type */
 #define __ST_COUNT_TYPE uint64_t
@@ -78,8 +92,11 @@
 #ifndef __ST_MAX
 #ifdef max
 #define __ST_MAX(a,b) max(a,b)
+#elif defined __max
+/* Microsoft C compiler always like to complicate */
+#define __ST_MAX(a,b) __max(a,b)
 #else
-#define __ST_MAX(a,b) ({ __typeof__ (a) _a = (a); __typeof__ (b) _b = (b); \
+#define __ST_MAX(a,b) ({ __typeof__(a) _a = (a); __typeof__(b) _b = (b); \
                   _a > _b ? _a : _b;})
 #endif /* max */
 #endif /* __ST_MAX */
@@ -87,8 +104,11 @@
 #ifndef __ST_MIN
 #ifdef min
 #define __ST_MIN(a,b) min(a,b)
+#elif defined __min
+/* Microsoft C compiler always like to complicate */
+#define __ST_MIN(a,b) __min(a,b)
 #else
-#define __ST_MIN(a,b) ({ __typeof__ (a) _a = (a); __typeof__ (b) _b = (b); \
+#define __ST_MIN(a,b) ({ __typeof__(a) _a = (a); __typeof__(b) _b = (b); \
                     _a < _b ? _a : _b;})
 #endif /* min */
 #endif /* __ST_MIN */
@@ -179,7 +199,7 @@ private:
 #define __ST_SELF_ struct __ST_MYSELF *pstat
 #define __ST_SELF2_ struct __ST_MYSELF *pstat,
 #define __ST_SELF_VAR_ pstat
-#define __ST_INLINE_ static __inline__
+#define __ST_INLINE_ static __ST_C_INLINE
 #define __ST_DOXY_SELF /** @param[in] pstat pointer to statistics structure */
 #define __ST_DOXY_SELF_CH /** @param[in,out] pstat pointer to statistics structure */
 
@@ -746,6 +766,7 @@ __ST_INLINE_ int __STV_NAME(copy)(__STV_SELF2_ const __STV_OTHER)
 #undef __ST_COUNT_TYPE
 #undef __ST_MEAN_TYPE
 #undef __ST_SQRT
+#undef __ST_C_INLINE
 #undef __ST_MAX
 #undef __ST_MIN
 #undef __ST_MYSELF
