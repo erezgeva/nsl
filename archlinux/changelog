@@ -1,3 +1,44 @@
+* Thu Aug 13 2026 ErezGeva2@gmail.com 1.0-1
+- Add README and add it to the documents package
+- Add GitHub pages action to upload the Doxygen
+- Add GitHub continuous integration in
+  - Debian
+  - Fedora
+  - Arch Linux
+  - MacOS
+  - Windows MingW64
+  - Windows MSVC
+- Add header development and documents packages to
+  - Debian
+  - Fedora/RPM
+  - Arch Linux/pacman
+- Add Doxygen documents
+  - Add comments in nsl_statistics.h
+  - Filter nsl_statistics.h to a C and C++ bases to generate the Doxygen
+- Update reuse files
+- Add main License file
+- Add SPDX tags for license and copyright
+- Improve nsl_statistics.h
+  - Add flag 'ST_SKIP_REGISTER' to prevent
+    the use of 'register` keyword
+  - Improve the selection of the square root function
+  - Dived by 2 to detect floating
+  - Syntax improvements
+- Add compilation
+  - newer C and C++ standards
+  - with clang
+- Improve documentation and spelling
+- Add test compilation for C++ 17
+  `register` keyword is obsolete in C++ 17
+- Comply to FSFE reuse recommendations
+- Add Debian git ignore for Debian package build
+- Add unit test
+- Add compilation of different standards
+- Follow limit constants defined by standard
+- Use include headers according to standard
+  C for C and C++ for C++
+- Add missing clearing of the vector on allocation
+
 * Fri Mar 22 2019 ErezGeva2@gmail.com 0.5-1
 - Fix add_elem.
 - copy return Boolean to indicate if it was copying.

@@ -6,8 +6,8 @@
 #
 # Maintainer: Erez Geva <ErezGeva2@gmail.com>
 ###############################################################################
-pkgver=0.5
-pkgrel=0
+pkgver=1.0
+pkgrel=1
 pkgname=(nsl-statistics-lib-dev nsl-statistics-lib-doc)
 arch=(any)
 url="https://github.com/erezgeva/nsl"
@@ -20,7 +20,7 @@ build() {
   # Place here as make do not use packages!
   make DESTDIR=../install install --no-print-directory
 }
-makedepends=(doxygen graphviz discount cmark-gfm texlive-fontutils pandoc)
+makedepends=(doxygen graphviz texlive-fontutils discount)
 package_nsl-statistics-lib-dev() {
   pkgdesc='library to calculate statistics while gathering measurements'
   mkdir -p $pkgdir/usr

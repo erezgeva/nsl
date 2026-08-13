@@ -1,8 +1,8 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-FileCopyrightText: Copyright © 2018 Erez Geva <ErezGeva2@gmail.com>
 
-ver_maj:=0
-ver_min:=5
+ver_maj:=1
+ver_min:=0
 
 SED:=sed
 OUT:=out
