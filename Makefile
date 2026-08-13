@@ -91,17 +91,26 @@ $(OUT)/cmp_cpp_ansi$(EXT): cmp_cpp.cpp | $(HEADER) $(HCFG) $(OUT)
 $(OUT)/cmp_cpp_skip$(EXT): cmp_cpp.cpp | $(HEADER) $(HCFG) $(OUT)
 	$(CXX) $(CPPFLAGS) -DST_SKIP_REGISTER -std=c++98 $< $(LDLIBS) -o "$@"
 
-doxygen/c/$(HEADER): $(HEADER)
+doxygen/$(HEADER): $(HEADER)
 	mkdir -p "$(@D)"
-	grep '^#include ' "$<"  | grep '\.h' | uniq > "$@"
-	printf '' | $(CC) -pipe -E -CC -xc - -include "$<"  -o /dev/stdout |\
-	$(SED) -n '/^$$/d;/^#/d;/ @file$$/,$$p' >> "$@"
+	cat "$<" | $(SED) -e '/__ST_FIELD_(min) =/ s/_MAX/_MAX_PASS/g'\
+	 -e '/__ST_FIELD_(min) =/ s/__ST_MIN/min/'\
+	 -e '/__ST_FIELD_(max) =/ s/__ST_MAX/max/'\
+	 -e 's/NULL/NULL_PASS/g' > "$@"
+
+doxygen/c/$(HEADER): doxygen/$(HEADER)
+	mkdir -p "$(@D)"
+	head -2 "$<" > "$@"
+	grep '^#include ' "$<" | grep '\.h' | uniq >> "$@"
+	printf '' | $(CC) -pipe -E -CC -xc - -include "$<" -o /dev/stdout |\
+	$(SED) -n '/^$$/d;/^#/d;s/_PASS//g;/ @file$$/,$$p' >> "$@"
 	astyle --project=none --suffix=none "$@"
-doxygen/cpp/$(HEADER): $(HEADER)
+doxygen/cpp/$(HEADER): doxygen/$(HEADER)
 	mkdir -p "$(@D)"
-	grep '^#include ' "$<" | grep '\.h' -v > "$@"
+	head -2 "$<" > "$@"
+	grep '^#include ' "$<" | grep '\.h' -v >> "$@"
 	printf '' | $(CXX) -pipe -E -CC -xc++ - -include "$<" -o /dev/stdout |\
-	$(SED) -n '/^$$/d;/^#/d;/ @file$$/,$$p' >> "$@"
+	$(SED) -n '/^$$/d;/^#/d;s/_PASS//g;/ @file$$/,$$p' >> "$@"
 	astyle --project=none --suffix=none "$@"
 
 doc/index.html: doxygen/c/$(HEADER) doxygen/cpp/$(HEADER) README.md
@@ -110,10 +119,10 @@ doc/index.html: doxygen/c/$(HEADER) doxygen/cpp/$(HEADER) README.md
 	doxygen ../doxygen_c.cfg >/dev/null &&\
 	doxygen ../doxygen_cpp.cfg >/dev/null
 	markdown README.md | $(SED)\
-	  -e "4 i <!doctype html><title>nsl-statistics library README</title>"\
-	  -e '/The header API doxygen/,+2d'\
-	  -e 's!https://erezgeva.github.io/nsl/!!;s!/html">C!/html/index.html">C!'\
-	  > doc/index.html
+	 -e "4 i <!doctype html><title>nsl-statistics library README</title>"\
+	 -e '/The header API doxygen/,+2d'\
+	 -e 's!https://erezgeva.github.io/nsl/!!;s!/html">C!/html/index.html">C!'\
+	 > doc/index.html
 
 doxygen: doc/index.html
 
@@ -188,7 +197,7 @@ $(ARCHL_BLD): $(ARCHL_BLD).org | $(LIB_SRC)
 	cp "$<" "$@"
 	cp $(LIB_SRC) archlinux/
 	printf "sha256sums=('%s')\n"\
-	  $(firstword $(shell sha256sum $(LIB_SRC))) >> "$@"
+	 $(firstword $(shell sha256sum $(LIB_SRC))) >> "$@"
 pkg: $(ARCHL_BLD)
 	cd archlinux && makepkg
 endif # which makepkg

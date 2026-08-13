@@ -733,10 +733,9 @@ __ST_INLINE_ int __STV_NAME(copy)(__STV_SELF2_ const __STV_OTHER)
      */
     __STV_MYSELF(__ST_TYPE start = 0, __ST_COUNT_TYPE count = 1,
             __ST_COUNT_TYPE step = 1)
-        {__STV_NAME(init)(start, count, step);}
-    ~__STV_MYSELF(){
-        {__STV_NAME(remove)();}
-    }
+    {__STV_NAME(init)(start, count, step);}
+    ~__STV_MYSELF()
+    {__STV_NAME(remove)();}
     /**
      * Copy constructor
      * @param[in] other vector to copy
