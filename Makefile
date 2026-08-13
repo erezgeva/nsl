@@ -93,13 +93,15 @@ $(OUT)/cmp_cpp_skip$(EXT): cmp_cpp.cpp | $(HEADER) $(HCFG) $(OUT)
 
 doxygen/c/$(HEADER): $(HEADER)
 	mkdir -p "$(@D)"
-	printf '' | $(CC) -pipe -E -CC -xc - -include $< -o /dev/stdout |\
-	$(SED) -n '/^$$/d;/^#/d;/ @file$$/,$$p' > "$@"
+	grep '^#include ' "$<"  | grep '\.h' | uniq > "$@"
+	printf '' | $(CC) -pipe -E -CC -xc - -include "$<"  -o /dev/stdout |\
+	$(SED) -n '/^$$/d;/^#/d;/ @file$$/,$$p' >> "$@"
 	astyle --project=none --suffix=none "$@"
 doxygen/cpp/$(HEADER): $(HEADER)
 	mkdir -p "$(@D)"
-	printf '' | $(CXX) -pipe -E -CC -xc++ - -include $< -o /dev/stdout |\
-	$(SED) -n '/^$$/d;/^#/d;/ @file$$/,$$p' > "$@"
+	grep '^#include ' "$<" | grep '\.h' -v > "$@"
+	printf '' | $(CXX) -pipe -E -CC -xc++ - -include "$<" -o /dev/stdout |\
+	$(SED) -n '/^$$/d;/^#/d;/ @file$$/,$$p' >> "$@"
 	astyle --project=none --suffix=none "$@"
 
 doc/index.html: doxygen/c/$(HEADER) doxygen/cpp/$(HEADER) README.md
